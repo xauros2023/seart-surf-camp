@@ -88,8 +88,8 @@ export default function ClientHome({ data }: { data: any }) {
         </motion.div>
       </section>
 
-      {/* Activities */}
-      <section className="py-24 px-4 bg-sand/30 dark:bg-ocean/10 relative">
+      {/* Activities Grid */}
+      <section id="activities" className="py-24 px-4 bg-[#0a0f1a] relative">
         <div className="max-w-7xl mx-auto">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-ocean dark:text-sunset mb-4">The Experience</h2>
@@ -122,7 +122,7 @@ export default function ClientHome({ data }: { data: any }) {
       </section>
 
       {/* Accommodation */}
-      <section className="py-24 px-4 max-w-7xl mx-auto">
+      <section id="rooms" className="py-24 px-4 max-w-7xl mx-auto">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-terracotta mb-4">Accommodation</h2>
           <p className="text-xl text-foreground/80 max-w-2xl mx-auto">Sleep comfortably in our beautifully designed rooms.</p>
@@ -138,7 +138,7 @@ export default function ClientHome({ data }: { data: any }) {
               <Tent className="text-terracotta mb-4" size={32} />
               <h3 className="text-2xl font-bold mb-2">Mixed Dorms</h3>
               <p className="text-foreground/70 mb-6">Cozy bunk beds with privacy curtains, reading lights, and secure lockers. Perfect for solo travelers.</p>
-              <button className="w-full py-3 border-2 border-ocean dark:border-white text-ocean dark:text-white rounded-full font-bold hover:bg-ocean hover:text-white dark:hover:bg-white dark:hover:text-ocean-dark transition-colors">Book a Bed</button>
+              <a href="#booking" className="w-full text-center py-3 border-2 border-ocean dark:border-white text-ocean dark:text-white rounded-full font-bold hover:bg-ocean hover:text-white dark:hover:bg-white dark:hover:text-ocean-dark transition-colors">Book a Bed</a>
             </div>
           </motion.div>
 
@@ -151,14 +151,14 @@ export default function ClientHome({ data }: { data: any }) {
               <BedDouble className="text-terracotta mb-4" size={32} />
               <h3 className="text-2xl font-bold mb-2">Private Rooms</h3>
               <p className="text-foreground/70 mb-6">Your own private sanctuary with an en-suite bathroom, queen-size bed, and bohemian decor.</p>
-              <button className="w-full py-3 border-2 border-ocean dark:border-white text-ocean dark:text-white rounded-full font-bold hover:bg-ocean hover:text-white dark:hover:bg-white dark:hover:text-ocean-dark transition-colors">Book a Room</button>
+              <a href="#booking" className="w-full text-center py-3 border-2 border-ocean dark:border-white text-ocean dark:text-white rounded-full font-bold hover:bg-ocean hover:text-white dark:hover:bg-white dark:hover:text-ocean-dark transition-colors">Book a Room</a>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* Location & Booking */}
-      <section className="py-24 px-4 bg-ocean-dark text-white">
+      <section id="booking" className="py-24 px-4 bg-ocean-dark text-white">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Booking Form */}
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="glass-card !bg-white/10 !border-white/20 p-8 rounded-3xl">
@@ -237,10 +237,13 @@ export default function ClientHome({ data }: { data: any }) {
             <a href="#" className="hover:text-sunset transition-colors">TikTok</a>
             <a href="mailto:contact@seartsurfcamp.com" className="hover:text-sunset transition-colors">contact@seartsurfcamp.com</a>
           </div>
-          <div className="mt-6 md:mt-0 flex space-x-4">
-            <a href="#" className="hover:text-white transition-colors">FAQ</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
+          <div className="hidden md:flex space-x-8 text-sm font-bold text-sand/80">
+            <a href="#about" className="hover:text-sunset transition-colors">The Vibe</a>
+            <a href="#activities" className="hover:text-sunset transition-colors">Activities</a>
+            <a href="#rooms" className="hover:text-sunset transition-colors">Rooms</a>
+          </div>
+          <div className="flex items-center space-x-4">
+            <a href="#booking" className="bg-sunset text-[#0a0f1a] px-6 py-2 rounded-full font-bold hover:bg-[#ffb142] transition-colors shadow-[0_0_15px_rgba(253,203,110,0.5)]">Book Now</a>
           </div>
         </div>
       </footer>
