@@ -1,0 +1,10 @@
+{
+  "hero": {
+    "title": "Welcome to SeArt Surf Camp",
+    "subtitle": "Your summer sanctuary at Banana Beach, Tamraght. Surf, chill, and experience the real Moroccan vibe."
+  },
+  "rooms": {
+    "dormPrice": "15€",
+    "privatePrice": "45€"
+  }
+}
