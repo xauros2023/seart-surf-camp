@@ -1,24 +1,23 @@
 "use server";
 
-import { promises as fs } from 'fs';
+import fs from 'fs';
+import { promises as fsPromises } from 'fs';
 import path from 'path';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export async function updateContent(newHeroTitle: string, newHeroSubtitle: string, dormPrice: string, privatePrice: string) {
   const filePath = path.join(process.cwd(), 'data.json');
-  
   try {
-    const fileContents = await fs.readFile(filePath, 'utf8');
+    const fileContents = await fsPromises.readFile(filePath, 'utf8');
     const data = JSON.parse(fileContents);
-    
     data.hero.title = newHeroTitle;
     data.hero.subtitle = newHeroSubtitle;
     if(!data.rooms) data.rooms = {};
     data.rooms.dormPrice = dormPrice;
     data.rooms.privatePrice = privatePrice;
-    
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
-    
+    await fsPromises.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
     revalidatePath('/');
     return { success: true };
   } catch (error) {
@@ -27,29 +26,49 @@ export async function updateContent(newHeroTitle: string, newHeroSubtitle: strin
   }
 }
 
-export async function submitBooking(bookingData: { checkIn: string, checkOut: string, guests: string, message: string }) {
-  const filePath = path.join(process.cwd(), 'bookings.json');
-  
+export async function submitBooking(data: any) {
+  const BOOKINGS_FILE = path.join(process.cwd(), 'bookings.json');
   try {
+    const booking = {
+      ...data,
+      id: Date.now().toString(),
+      timestamp: new Date().toISOString(),
+      status: "pending"
+    };
+    
     let bookings = [];
-    try {
-      const fileContents = await fs.readFile(filePath, 'utf8');
-      bookings = JSON.parse(fileContents);
-    } catch(e) {
-      // file might not exist or be empty
+    if (fs.existsSync(BOOKINGS_FILE)) {
+      bookings = JSON.parse(fs.readFileSync(BOOKINGS_FILE, 'utf-8'));
     }
     
-    bookings.push({
-      id: Date.now().toString(),
-      date: new Date().toISOString(),
-      ...bookingData
-    });
+    bookings.push(booking);
+    fs.writeFileSync(BOOKINGS_FILE, JSON.stringify(bookings, null, 2));
     
-    await fs.writeFile(filePath, JSON.stringify(bookings, null, 2), 'utf8');
+    revalidatePath('/admin');
     return { success: true };
   } catch (error) {
-    console.error("Failed to save booking", error);
-    return { success: false, error: "Failed to save booking" };
+    console.error('Error saving booking:', error);
+    return { success: false };
+  }
+}
+
+export async function updateBookingStatus(id: string, newStatus: string) {
+  const BOOKINGS_FILE = path.join(process.cwd(), 'bookings.json');
+  try {
+    if (!fs.existsSync(BOOKINGS_FILE)) return { success: false };
+    
+    let bookings = JSON.parse(fs.readFileSync(BOOKINGS_FILE, 'utf-8'));
+    const index = bookings.findIndex((b: any) => b.id === id);
+    if (index !== -1) {
+      bookings[index].status = newStatus;
+      fs.writeFileSync(BOOKINGS_FILE, JSON.stringify(bookings, null, 2));
+      revalidatePath('/admin');
+      return { success: true };
+    }
+    return { success: false };
+  } catch (error) {
+    console.error('Error updating booking status:', error);
+    return { success: false };
   }
 }
 
@@ -60,14 +79,11 @@ export async function uploadImage(formData: FormData) {
   if (!file || !fileName) {
     return { success: false, error: "Missing file or filename" };
   }
-  
   try {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    
     const filePath = path.join(process.cwd(), 'public', 'images', fileName);
-    await fs.writeFile(filePath, buffer);
-    
+    await fsPromises.writeFile(filePath, buffer);
     revalidatePath('/');
     return { success: true };
   } catch (error) {
@@ -75,8 +91,6 @@ export async function uploadImage(formData: FormData) {
     return { success: false, error: "Failed to upload image" };
   }
 }
-
-import { cookies } from 'next/headers';
 
 export async function loginAction(password: string) {
   if (password === 'tamraght2026') {
@@ -90,8 +104,6 @@ export async function loginAction(password: string) {
   }
   return { success: false };
 }
-
-import { redirect } from 'next/navigation';
 
 export async function logoutAction() {
   const cookieStore = await cookies();

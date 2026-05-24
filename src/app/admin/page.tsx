@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Save, UploadCloud, CheckCircle, CalendarDays, Users, MessageSquare } from "lucide-react";
-import { updateContent, uploadImage } from "../actions";
+import { updateContent, uploadImage, updateBookingStatus } from "../actions";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("content");
@@ -16,6 +16,13 @@ export default function AdminDashboard() {
   const [uploadingImg, setUploadingImg] = useState<string | null>(null);
   
   const [bookings, setBookings] = useState<any[]>([]);
+
+  const fetchBookings = () => {
+    fetch('/api/bookings')
+      .then(res => res.json())
+      .then(data => setBookings(data))
+      .catch(console.error);
+  };
 
   useEffect(() => {
     fetch('/api/data')
@@ -32,11 +39,15 @@ export default function AdminDashboard() {
       })
       .catch(console.error);
       
-    fetch('/api/bookings')
-      .then(res => res.json())
-      .then(data => setBookings(data))
-      .catch(console.error);
+    fetchBookings();
   }, []);
+
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    const res = await updateBookingStatus(id, newStatus);
+    if(res.success) {
+      fetchBookings();
+    }
+  };
 
   const handleSaveContent = async () => {
     setSaving(true);
@@ -162,12 +173,39 @@ export default function AdminDashboard() {
                     <div className="flex items-center space-x-4">
                       <span className="flex items-center text-ocean-dark font-bold"><CalendarDays size={16} className="mr-1"/> {booking.checkIn} to {booking.checkOut}</span>
                       <span className="flex items-center text-gray-700"><Users size={16} className="mr-1"/> {booking.guests}</span>
+                      <span className={`px-2 py-1 text-xs font-bold rounded-full ${
+                        booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                        booking.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                        'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {(booking.status || 'pending').toUpperCase()}
+                      </span>
                     </div>
-                    <span className="text-xs text-gray-400">{new Date(booking.date).toLocaleString()}</span>
+                    <span className="text-xs text-gray-400">{new Date(booking.timestamp || booking.date || Date.now()).toLocaleString()}</span>
                   </div>
                   <div className="mt-2 bg-white p-3 rounded border border-gray-200 text-gray-800">
                     <span className="flex items-center text-xs font-bold text-gray-500 mb-1"><MessageSquare size={14} className="mr-1"/> Message:</span>
                     {booking.message}
+                  </div>
+                  <div className="mt-3 flex space-x-2">
+                    <button 
+                      onClick={() => handleStatusChange(booking.id, 'confirmed')}
+                      className={`text-xs font-bold px-3 py-1 rounded border ${booking.status === 'confirmed' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-green-600 border-green-600 hover:bg-green-50'}`}
+                    >
+                      Confirm
+                    </button>
+                    <button 
+                      onClick={() => handleStatusChange(booking.id, 'pending')}
+                      className={`text-xs font-bold px-3 py-1 rounded border ${!booking.status || booking.status === 'pending' ? 'bg-yellow-500 text-white border-yellow-500' : 'bg-white text-yellow-600 border-yellow-500 hover:bg-yellow-50'}`}
+                    >
+                      Pending
+                    </button>
+                    <button 
+                      onClick={() => handleStatusChange(booking.id, 'cancelled')}
+                      className={`text-xs font-bold px-3 py-1 rounded border ${booking.status === 'cancelled' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-red-600 border-red-600 hover:bg-red-50'}`}
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </div>
               ))}

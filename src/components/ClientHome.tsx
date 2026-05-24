@@ -4,7 +4,8 @@ import { useState, useRef } from "react";
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
 import { MessageCircle, MapPin, Waves, Music, Users, Coffee, BedDouble, Tent, ArrowRight, Calendar, MessageSquare } from "lucide-react";
 import Image from "next/image";
-import { submitBooking } from "../app/actions";
+import BookingWizard from "./BookingWizard";
+import ThemeToggle from "./ThemeToggle";
 
 // Magnetic Button Component for Premium Feel
 const MagneticButton = ({ children, onClick, className, type = "button" }: any) => {
@@ -67,8 +68,6 @@ const stagger: any = {
 };
 
 export default function ClientHome({ data }: { data: any }) {
-  const [formData, setFormData] = useState({ checkIn: "", checkOut: "", guests: "1", message: "" });
-  const [bookingStatus, setBookingStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const dormPrice = data?.rooms?.dormPrice || "15€";
   const privatePrice = data?.rooms?.privatePrice || "45€";
   const heroTitle = data?.hero?.title || "SeArt Surf Camp";
@@ -77,19 +76,6 @@ export default function ClientHome({ data }: { data: any }) {
   const { scrollYProgress } = useScroll();
   const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacityBg = useTransform(scrollYProgress, [0, 0.5], [1, 0.2]);
-
-  const handleBookingSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setBookingStatus("loading");
-    const res = await submitBooking(formData);
-    if(res.success) {
-      setBookingStatus("success");
-      setFormData({ checkIn: "", checkOut: "", guests: "1", message: "" });
-      setTimeout(() => setBookingStatus("idle"), 5000);
-    } else {
-      setBookingStatus("error");
-    }
-  };
 
   return (
     <div className="bg-background min-h-screen text-foreground selection:bg-terracotta selection:text-white">
@@ -110,21 +96,26 @@ export default function ClientHome({ data }: { data: any }) {
           <Waves className="text-terracotta" size={32} />
           <span className="text-2xl font-bold tracking-tighter">SeArt.</span>
         </div>
-        <div className="hidden md:flex space-x-10 text-sm font-bold tracking-wide text-sand/80">
+        <div className="hidden md:flex space-x-10 text-sm font-bold tracking-wide text-sand/80 items-center">
           <a href="#about" className="hover:text-white transition-colors relative group">
             The Vibe
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-terracotta to-sunset group-hover:w-full transition-all duration-300"></span>
           </a>
-          <a href="#activities" className="hover:text-white transition-colors relative group">
-            Activities
+          <a href="/packages" className="hover:text-white transition-colors relative group">
+            Packages
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-terracotta to-sunset group-hover:w-full transition-all duration-300"></span>
           </a>
-          <a href="#rooms" className="hover:text-white transition-colors relative group">
-            Rooms
+          <a href="/gallery" className="hover:text-white transition-colors relative group">
+            Gallery
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-terracotta to-sunset group-hover:w-full transition-all duration-300"></span>
+          </a>
+          <a href="/faq" className="hover:text-white transition-colors relative group">
+            FAQ
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-terracotta to-sunset group-hover:w-full transition-all duration-300"></span>
           </a>
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center space-x-4">
+          <ThemeToggle />
           <a href="#booking" className="bg-gradient-to-r from-terracotta to-sunset text-[#050811] px-6 py-2.5 rounded-full font-bold hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,95,109,0.3)]">Book Now</a>
         </div>
       </motion.header>
@@ -286,58 +277,8 @@ export default function ClientHome({ data }: { data: any }) {
       <section id="booking" className="py-32 px-4 relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Booking Form */}
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="glass-card p-10 lg:p-14">
-            <h3 className="text-4xl font-bold text-white mb-2 tracking-tighter">Reserve Your Spot</h3>
-            <p className="text-foreground/60 mb-10 font-light">Secure your bed or room at SeArt Surf Camp today.</p>
-            
-            <form onSubmit={handleBookingSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-sand/80 uppercase tracking-widest">Check-in</label>
-                  <input type="date" required value={formData.checkIn} onChange={e => setFormData({...formData, checkIn: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-terracotta transition-colors backdrop-blur-sm" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-sand/80 uppercase tracking-widest">Check-out</label>
-                  <input type="date" required value={formData.checkOut} onChange={e => setFormData({...formData, checkOut: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-terracotta transition-colors backdrop-blur-sm" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-sand/80 uppercase tracking-widest">Guests</label>
-                <select value={formData.guests} onChange={e => setFormData({...formData, guests: e.target.value})} className="w-full bg-[#0a0f1a] border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-terracotta transition-colors">
-                  <option>1 Person</option>
-                  <option>2 People</option>
-                  <option>3 People</option>
-                  <option>Group (4+)</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-sand/80 uppercase tracking-widest">Message</label>
-                <textarea required value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} rows={3} placeholder="Tell us about your trip..." className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-terracotta transition-colors backdrop-blur-sm"></textarea>
-              </div>
-              
-              <MagneticButton 
-                type="submit" 
-                className="w-full relative group overflow-hidden rounded-xl bg-gradient-to-r from-terracotta to-sunset disabled:opacity-50 mt-4"
-              >
-                <div className="relative z-10 font-bold text-[#050811] py-4 text-lg tracking-wide">
-                  {bookingStatus === "loading" ? "Processing..." : "Submit Request"}
-                </div>
-                <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
-              </MagneticButton>
-              
-              <AnimatePresence>
-                {bookingStatus === "success" && (
-                  <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-ocean text-center text-sm font-bold mt-4">
-                    Request sent successfully! We will contact you soon.
-                  </motion.p>
-                )}
-                {bookingStatus === "error" && (
-                  <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-terracotta text-center text-sm font-bold mt-4">
-                    Error sending request. Please try again.
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </form>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="glass-card p-8 lg:p-12 border-ocean-dark/20 shadow-[0_0_40px_rgba(0,102,204,0.1)]">
+            <BookingWizard dormPrice={dormPrice} privatePrice={privatePrice} />
           </motion.div>
 
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="flex flex-col justify-between">
