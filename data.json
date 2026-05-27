@@ -6,5 +6,18 @@
   "rooms": {
     "dormPrice": "15€",
     "privatePrice": "45€"
+  },
+  "contact": {
+    "email": "contact@seartsurfcamp.com",
+    "instagram": "https://www.instagram.com/seartsurfcamp/",
+    "whatsapp": "https://wa.me/212600000000",
+    "whatsappLabel": "+212 600 000 000",
+    "addressLine1": "Tamraght Ouzdar, Banana Beach",
+    "addressLine2": "Agadir, Morocco"
+  },
+  "seo": {
+    "siteUrl": "https://seartsurfcamp.com",
+    "title": "SeArt Surf Camp | Tamraght & Banana Beach",
+    "description": "Surf camp in Tamraght, Morocco with accommodation, surf coaching, yoga, coworking, Moroccan food and Banana Beach access."
   }
 }

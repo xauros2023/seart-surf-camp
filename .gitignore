@@ -41,3 +41,8 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# Local dev artifacts (screenshots, playwright logs)
+/.playwright-mcp/
+/*.png
+!/public/**/*.png

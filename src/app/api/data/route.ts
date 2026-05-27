@@ -1,13 +1,10 @@
-import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { NextResponse } from "next/server";
+import { getSiteContent } from "@/lib/data-store";
 
 export async function GET() {
-  const filePath = path.join(process.cwd(), 'data.json');
   try {
-    const fileContents = await fs.readFile(filePath, 'utf8');
-    return NextResponse.json(JSON.parse(fileContents));
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to read data' }, { status: 500 });
+    return NextResponse.json(await getSiteContent());
+  } catch {
+    return NextResponse.json({ error: "Failed to read data" }, { status: 500 });
   }
 }
