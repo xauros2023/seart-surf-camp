@@ -53,13 +53,17 @@ export async function saveBookings(bookings: Booking[]) {
   await writeJsonFile(bookingsFile, bookings);
 }
 
+const VALID_ID_TYPES = ["national_id", "residence_permit", "passport", "driver_license"];
+
 export function validateBookingInput(input: BookingInput) {
   const errors: BookingErrors = {};
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const checkInDate = new Date(`${input.checkIn}T00:00:00`);
   const checkOutDate = new Date(`${input.checkOut}T00:00:00`);
-  const guests = Number.parseInt(input.guests, 10);
+  const adults = Number.parseInt(input.adults ?? input.guests, 10);
+  const kidsHalf = Number.parseInt(input.childrenHalf ?? "0", 10);
+  const kidsFree = Number.parseInt(input.childrenFree ?? "0", 10);
 
   if (!input.name.trim()) {
     errors.name = "Name is required.";
@@ -85,8 +89,16 @@ export function validateBookingInput(input: BookingInput) {
     errors.checkOut = "Check-out must be after check-in.";
   }
 
-  if (!Number.isFinite(guests) || guests < 1 || guests > 6) {
-    errors.guests = "Choose between 1 and 6 guests.";
+  if (!Number.isFinite(adults) || adults < 1 || adults > 8) {
+    errors.adults = "Choose between 1 and 8 adults.";
+  }
+
+  if (!Number.isFinite(kidsHalf) || kidsHalf < 0 || kidsHalf > 6) {
+    errors.childrenHalf = "Children must be between 0 and 6.";
+  }
+
+  if (!Number.isFinite(kidsFree) || kidsFree < 0 || kidsFree > 4) {
+    errors.childrenFree = "Toddlers must be between 0 and 4.";
   }
 
   if (input.roomType !== "dorm" && input.roomType !== "private") {
@@ -97,6 +109,17 @@ export function validateBookingInput(input: BookingInput) {
     errors.message = "Message must be under 600 characters.";
   }
 
+  // ID is optional; if filled, validate consistency
+  if (input.idType && !VALID_ID_TYPES.includes(input.idType)) {
+    errors.idType = "Invalid document type.";
+  }
+  if (input.idType && (!input.idNumber || input.idNumber.trim().length < 3)) {
+    errors.idNumber = "Document number is required when a type is selected.";
+  }
+  if (input.idNumber && input.idNumber.length > 40) {
+    errors.idNumber = "Document number is too long.";
+  }
+
   return {
     valid: Object.keys(errors).length === 0,
     errors,
@@ -105,12 +128,24 @@ export function validateBookingInput(input: BookingInput) {
 
 export async function createBooking(input: BookingInput) {
   const content = await getSiteContent();
+  const adults = Number.parseInt(input.adults || input.guests || "1", 10) || 1;
+  const kidsHalf = Number.parseInt(input.childrenHalf || "0", 10) || 0;
+  const kidsFree = Number.parseInt(input.childrenFree || "0", 10) || 0;
+  const totalGuests = adults + kidsHalf + kidsFree;
+
   const booking: Booking = {
     ...input,
     name: input.name.trim(),
     email: input.email.trim().toLowerCase(),
     phone: input.phone.trim(),
     message: input.message.trim(),
+    // Keep `guests` in sync as total head-count for backwards compat
+    guests: String(totalGuests),
+    adults: String(adults),
+    childrenHalf: String(kidsHalf),
+    childrenFree: String(kidsFree),
+    idType: input.idType || "",
+    idNumber: input.idNumber?.trim() || "",
     id: crypto.randomUUID(),
     timestamp: new Date().toISOString(),
     status: "pending",

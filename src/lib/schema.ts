@@ -13,7 +13,7 @@ export function lodgingBusinessSchema(content: SiteContent = DEFAULT_CONTENT) {
     name: "SeArt Surf Camp",
     description: content.seo.description,
     url: content.seo.siteUrl,
-    image: `${content.seo.siteUrl}/images/hero-bg.png`,
+    image: `${content.seo.siteUrl.replace(/\/$/, "")}/images/hero-bg.png`,
     priceRange: `${content.rooms.dormPrice} - ${content.rooms.privatePrice}`,
     address: {
       "@type": "PostalAddress",

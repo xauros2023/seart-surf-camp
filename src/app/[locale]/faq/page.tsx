@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import FaqAccordion from "@/components/FaqAccordion";
 import JsonLd from "@/components/JsonLd";
 import PageHero from "@/components/PageHero";
@@ -10,13 +11,16 @@ import { faqs } from "@/lib/content";
 import { getSiteContent } from "@/lib/data-store";
 import { faqSchema } from "@/lib/schema";
 
-export const metadata: Metadata = {
-  title: "FAQ",
-  description:
-    "Answers about transfers, surf gear, Wi-Fi, food options and the best season for surfing in Morocco.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages.faq" });
+  return { title: t("kicker"), description: t("subtitle") };
+}
 
-export default async function FAQPage() {
+export default async function FAQPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("pages.faq");
   const content = await getSiteContent();
 
   return (
@@ -24,11 +28,7 @@ export default async function FAQPage() {
       <JsonLd data={faqSchema()} />
       <SiteHeader />
       <main>
-        <PageHero
-          kicker="FAQ"
-          title="Useful answers before you arrive."
-          subtitle="For anything specific about your dates, surf level or transfer, send a message and we will confirm directly."
-        />
+        <PageHero kicker={t("kicker")} title={t("title")} subtitle={t("subtitle")} />
 
         <section className="mx-auto max-w-4xl px-5 pb-32">
           <SectionReveal>
@@ -37,19 +37,15 @@ export default async function FAQPage() {
 
           <SectionReveal>
             <div className="mt-14 overflow-hidden rounded-3xl border border-foreground/[0.08] bg-gradient-to-br from-terracotta/[0.08] via-sunset/[0.05] to-transparent p-10 text-center">
-              <h2 className="font-serif text-3xl font-medium tracking-tight">
-                Still have questions?
-              </h2>
-              <p className="mx-auto mt-3 max-w-xl text-foreground/65">
-                Send your travel dates, group size and surf level. We will help you choose the right stay.
-              </p>
+              <h2 className="font-serif text-3xl font-medium tracking-tight">{t("stillTitle")}</h2>
+              <p className="mx-auto mt-3 max-w-xl text-foreground/65">{t("stillBody")}</p>
               <a
                 href={content.contact.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="primary-button mx-auto mt-7 max-w-xs"
               >
-                WhatsApp us
+                {t("stillCta")}
               </a>
             </div>
           </SectionReveal>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import PageHero from "@/components/PageHero";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
@@ -8,30 +9,30 @@ import Noise from "@/components/motion/Noise";
 import { galleryImages } from "@/lib/content";
 import { getSiteContent } from "@/lib/data-store";
 
-export const metadata: Metadata = {
-  title: "Gallery",
-  description: "Photos from SeArt Surf Camp, Banana Beach, shared spaces and Tamraght surf days.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages.gallery" });
+  return { title: t("kicker"), description: t("subtitle") };
+}
 
-export default async function GalleryPage() {
+export default async function GalleryPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("pages.gallery");
   const content = await getSiteContent();
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <SiteHeader />
       <main>
-        <PageHero
-          kicker="Gallery"
-          title="A look at the waves, rooms and shared camp moments."
-          subtitle="Real visual texture matters for a travel decision."
-        >
+        <PageHero kicker={t("kicker")} title={t("title")} subtitle={t("subtitle")}>
           <a
             href={content.contact.instagram}
             target="_blank"
             rel="noopener noreferrer"
             className="secondary-button"
           >
-            Follow on Instagram →
+            {t("follow")} →
           </a>
         </PageHero>
 

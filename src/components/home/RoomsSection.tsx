@@ -5,25 +5,29 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { BedDouble, Tent, ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import SectionReveal from "@/components/motion/SectionReveal";
 import { StaggerContainer, StaggerItem } from "@/components/motion/Stagger";
+import { useCurrency } from "@/components/providers/CurrencyProvider";
+import { parsePrice } from "@/lib/content";
 
 export default function RoomsSection({ dormPrice, privatePrice }: { dormPrice: string; privatePrice: string }) {
+  const t = useTranslations("rooms");
+  const { format } = useCurrency();
+
   return (
     <section id="rooms" className="section-shell">
       <div className="mx-auto mb-14 max-w-3xl text-center">
         <SectionReveal>
-          <p className="section-kicker mx-auto justify-center">Accommodation</p>
+          <p className="section-kicker mx-auto justify-center">{t("kicker")}</p>
         </SectionReveal>
         <SectionReveal delay={0.1}>
           <h2 className="section-title mx-auto text-center text-balance">
-            Stay simple, comfortable and <span className="font-serif italic text-terracotta">close to the beach.</span>
+            {t("titleStart")} <span className="font-serif italic text-terracotta">{t("titleAccent")}</span>
           </h2>
         </SectionReveal>
         <SectionReveal delay={0.2}>
-          <p className="section-copy mx-auto text-center">
-            Choose a social dorm bed or a private room. Both include access to shared spaces, rooftop, Wi-Fi and camp support.
-          </p>
+          <p className="section-copy mx-auto text-center">{t("copy")}</p>
         </SectionReveal>
       </div>
 
@@ -32,20 +36,24 @@ export default function RoomsSection({ dormPrice, privatePrice }: { dormPrice: s
           <RoomCard
             image="/images/room-dorm.webp"
             icon={<Tent size={28} aria-hidden="true" />}
-            title="Premium Dorms"
-            price={dormPrice}
-            priceLabel="/night/person"
-            copy="Bunk beds with privacy curtains, reading lights and lockers for solo travelers or friends."
+            title={t("dorm.title")}
+            price={format(parsePrice(dormPrice))}
+            priceLabel={t("dorm.priceLabel")}
+            copy={t("dorm.copy")}
+            from={t("from")}
+            bookLabel={t("book")}
           />
         </StaggerItem>
         <StaggerItem>
           <RoomCard
             image="/images/room-private.webp"
             icon={<BedDouble size={28} aria-hidden="true" />}
-            title="Private Suites"
-            price={privatePrice}
-            priceLabel="/night/room"
-            copy="A quieter room with a queen-size bed, private feel and bohemian coastal details."
+            title={t("private.title")}
+            price={format(parsePrice(privatePrice))}
+            priceLabel={t("private.priceLabel")}
+            copy={t("private.copy")}
+            from={t("from")}
+            bookLabel={t("book")}
           />
         </StaggerItem>
       </StaggerContainer>
@@ -60,6 +68,8 @@ function RoomCard({
   price,
   priceLabel,
   copy,
+  from,
+  bookLabel,
 }: {
   image: string;
   icon: ReactNode;
@@ -67,6 +77,8 @@ function RoomCard({
   price: string;
   priceLabel: string;
   copy: string;
+  from: string;
+  bookLabel: string;
 }) {
   return (
     <motion.article
@@ -93,14 +105,14 @@ function RoomCard({
           </div>
           <div className="mt-10 flex items-end justify-between gap-4 border-t border-foreground/10 pt-6">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-foreground/45">From</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-foreground/45">{from}</p>
               <p className="mt-1.5 font-serif text-4xl font-medium text-foreground">
                 {price}
-                <span className="ml-1 text-sm font-sans font-medium text-foreground/50">{priceLabel}</span>
+                <span className="ms-1 text-sm font-sans font-medium text-foreground/50">{priceLabel}</span>
               </p>
             </div>
             <Link href="/#booking" className="group inline-flex items-center gap-1.5 rounded-full border border-foreground/20 px-5 py-2.5 text-sm font-semibold transition-all duration-300 hover:border-foreground hover:bg-foreground hover:text-background">
-              Book
+              {bookLabel}
               <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5" />
             </Link>
           </div>

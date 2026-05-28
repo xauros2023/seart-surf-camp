@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import JsonLd from "@/components/JsonLd";
 import PageHero from "@/components/PageHero";
 import SiteFooter from "@/components/SiteFooter";
@@ -11,13 +12,16 @@ import { packages } from "@/lib/content";
 import { getSiteContent } from "@/lib/data-store";
 import { offersSchema } from "@/lib/schema";
 
-export const metadata: Metadata = {
-  title: "Surf Packages",
-  description:
-    "Compare SeArt Surf Camp packages for surf, yoga, digital nomad stays and beginner progression in Tamraght.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages.packages" });
+  return { title: t("kicker"), description: t("subtitle") };
+}
 
-export default async function PackagesPage() {
+export default async function PackagesPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("pages.packages");
   const content = await getSiteContent();
 
   return (
@@ -25,13 +29,9 @@ export default async function PackagesPage() {
       <JsonLd data={offersSchema(content)} />
       <SiteHeader />
       <main>
-        <PageHero
-          kicker="Packages"
-          title="Choose the rhythm of your Moroccan surf holiday."
-          subtitle="All packages include accommodation, breakfast, camp facilities and local guidance. We confirm exact dates and room availability after your request."
-        >
+        <PageHero kicker={t("kicker")} title={t("title")} subtitle={t("subtitle")}>
           <Link href="/#booking" className="secondary-button">
-            Request dates →
+            {t("requestDates")} →
           </Link>
         </PageHero>
 
@@ -39,22 +39,24 @@ export default async function PackagesPage() {
           <StaggerContainer className="grid gap-6 lg:grid-cols-3" staggerChildren={0.1}>
             {packages.map((pack) => (
               <StaggerItem key={pack.id}>
-                <PackageCard pack={pack} />
+                <PackageCard pack={pack} popularLabel={t("popular")} selectLabel={t("select")} />
               </StaggerItem>
             ))}
           </StaggerContainer>
 
           <SectionReveal>
             <div className="mt-16 rounded-3xl border border-foreground/[0.08] bg-foreground/[0.025] p-10 text-center">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/50">Need something custom?</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/50">
+                {t("customKicker")}
+              </p>
               <h2 className="mt-4 font-serif text-3xl font-medium tracking-tight sm:text-4xl">
-                Tell us about your <span className="italic text-terracotta">group, your level, your dates.</span>
+                {t("customTitleStart")} <span className="italic text-terracotta">{t("customTitleAccent")}</span>
               </h2>
               <Link
                 href="/contact"
                 className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-7 py-3.5 text-sm font-semibold text-background transition-transform duration-500 hover:-translate-y-0.5"
               >
-                Build a custom stay →
+                {t("customCta")} →
               </Link>
             </div>
           </SectionReveal>
@@ -66,7 +68,15 @@ export default async function PackagesPage() {
   );
 }
 
-function PackageCard({ pack }: { pack: (typeof packages)[number] }) {
+function PackageCard({
+  pack,
+  popularLabel,
+  selectLabel,
+}: {
+  pack: (typeof packages)[number];
+  popularLabel: string;
+  selectLabel: string;
+}) {
   const highlighted = "highlighted" in pack && pack.highlighted;
 
   return (
@@ -78,9 +88,9 @@ function PackageCard({ pack }: { pack: (typeof packages)[number] }) {
       }`}
     >
       {highlighted && (
-        <span className="absolute right-6 top-6 inline-flex items-center gap-1.5 rounded-full bg-ocean px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#061014]">
+        <span className="absolute end-6 top-6 inline-flex items-center gap-1.5 rounded-full bg-ocean px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#061014]">
           <span className="size-1.5 rounded-full bg-[#061014]" />
-          Popular
+          {popularLabel}
         </span>
       )}
       <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-foreground/50">{pack.duration}</p>
@@ -103,7 +113,7 @@ function PackageCard({ pack }: { pack: (typeof packages)[number] }) {
             : "border border-foreground/20 hover:border-foreground hover:bg-foreground hover:text-background"
         }`}
       >
-        Select package →
+        {selectLabel} →
       </Link>
     </article>
   );

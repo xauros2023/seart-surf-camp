@@ -1,0 +1,263 @@
+{
+  "nav": {
+    "about": "Quiénes somos",
+    "rooms": "Habitaciones",
+    "packages": "Paquetes",
+    "gallery": "Galería",
+    "faq": "FAQ",
+    "contact": "Contacto",
+    "bookNow": "Reservar",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú"
+  },
+  "switcher": {
+    "language": "Idioma",
+    "currency": "Moneda"
+  },
+  "hero": {
+    "kicker": "Tamraght · Banana Beach",
+    "title": "Bienvenido a SeArt Surf Camp",
+    "subtitle": "Tu refugio de verano en Banana Beach, Tamraght. Surf, descanso y la vibra marroquí auténtica.",
+    "ctaPrimary": "Ver disponibilidad",
+    "ctaSecondary": "Ver paquetes",
+    "scroll": "Desliza"
+  },
+  "marquee": [
+    "Banana Beach",
+    "Coaching de surf",
+    "Yoga en la azotea",
+    "Comida marroquí",
+    "Coworking",
+    "Música en vivo",
+    "Paradise Valley",
+    "Sesiones al atardecer"
+  ],
+  "about": {
+    "kicker": "Tamraght, Marruecos",
+    "titleStart": "Un surf camp para olas, trabajo y",
+    "titleAccent": "días marroquíes tranquilos.",
+    "copy": "SeArt está a minutos de Banana Beach y diseñado para viajeros que quieren más que una cama: sesiones de surf con instructor, ambiente social cálido, rincones de trabajo fiables y acceso fácil a la costa de Agadir.",
+    "highlights": {
+      "waves": "Olas de clase mundial",
+      "rooftop": "Azotea con vista al océano",
+      "music": "Noches de música en vivo",
+      "community": "Comunidad acogedora"
+    },
+    "review": {
+      "quote": "¡El mejor hostel de Marruecos!",
+      "source": "Reseñas HostelWorld"
+    }
+  },
+  "experiences": {
+    "kicker": "La experiencia",
+    "titleStart": "Todo alrededor del océano,",
+    "titleAccent": "diseñado en una sola estancia.",
+    "seeMore": "Conoce la historia del camp",
+    "items": {
+      "coaching": {
+        "eyebrow": "Diario",
+        "title": "Coaching de surf",
+        "desc": "Clases diarias con equipo, transporte a la playa y entrenamiento por nivel."
+      },
+      "daysOut": {
+        "eyebrow": "Aventura",
+        "title": "Excursiones marroquíes",
+        "desc": "Mercados, Paradise Valley, rutas del desierto y noches tranquilas tras el océano."
+      },
+      "nights": {
+        "eyebrow": "Noches",
+        "title": "Noches de comunidad",
+        "desc": "Cenas compartidas, música en vivo, atardeceres en la azotea y charlas alrededor del fuego."
+      }
+    }
+  },
+  "testimonials": {
+    "kicker": "Amado por los viajeros",
+    "titleStart": "Lo que dicen",
+    "titleAccent": "después de irse.",
+    "prev": "Testimonio anterior",
+    "next": "Testimonio siguiente"
+  },
+  "rooms": {
+    "kicker": "Alojamiento",
+    "titleStart": "Simple, cómodo y",
+    "titleAccent": "cerca de la playa.",
+    "copy": "Elige una cama en dormitorio social o una habitación privada. Ambos incluyen acceso a espacios compartidos, azotea, Wi-Fi y soporte del camp.",
+    "from": "Desde",
+    "book": "Reservar",
+    "dorm": {
+      "title": "Dormitorios Premium",
+      "priceLabel": "/noche/persona",
+      "copy": "Literas con cortinas de privacidad, luces de lectura y casilleros para viajeros solos o amigos."
+    },
+    "private": {
+      "title": "Suites Privadas",
+      "priceLabel": "/noche/habitación",
+      "copy": "Una habitación más tranquila con cama queen, ambiente privado y detalles bohemios costeros."
+    }
+  },
+  "booking": {
+    "location": {
+      "title": "Nuestra ubicación",
+      "address1": "Tamraght Ouzdar, Banana Beach",
+      "address2": "Agadir, Marruecos"
+    },
+    "map": {
+      "eyebrow": "Acceso a Banana Beach",
+      "titleStart": "Tamraght,",
+      "titleAccent": "a minutos de las olas.",
+      "cta": "Abrir Google Maps"
+    },
+    "wizard": {
+      "stepDates": "Fechas",
+      "stepStay": "Estancia",
+      "stepContact": "Contacto",
+      "stepCount": "Paso",
+      "dates": {
+        "title": "¿Cuándo te unes a nosotros?",
+        "checkIn": "Entrada",
+        "checkOut": "Salida",
+        "errorOrder": "La salida debe ser posterior a la entrada.",
+        "continue": "Continuar"
+      },
+      "stay": {
+        "title": "Elige tu comodidad",
+        "guestsTitle": "¿Quién viaja?",
+        "adults": "Adultos",
+        "adultsHelp": "12 años o más",
+        "childrenHalf": "Niños",
+        "childrenHalfHelp": "4 – 11 años (-50%)",
+        "childrenFree": "Bebés",
+        "childrenFreeHelp": "0 – 3 años (gratis)",
+        "nights": "{count, plural, one {# noche} other {# noches}}",
+        "back": "Volver a fechas",
+        "continue": "Continuar"
+      },
+      "contact": {
+        "title": "Envía tu solicitud",
+        "name": "Nombre completo",
+        "email": "Email",
+        "phone": "WhatsApp / teléfono",
+        "message": "Notas",
+        "messagePlaceholder": "Traslado aeropuerto, nivel de surf, necesidades dietéticas...",
+        "idHeader": "Documento de identidad",
+        "idHelp": "Opcional — acelera tu check-in",
+        "idType": "Tipo de documento",
+        "idNumber": "Número de documento",
+        "idTypes": {
+          "national_id": "DNI / Tarjeta nacional",
+          "residence_permit": "Permiso de residencia",
+          "passport": "Pasaporte",
+          "driver_license": "Permiso de conducir"
+        },
+        "back": "Volver a estancia",
+        "submit": "Enviar reserva",
+        "sending": "Enviando...",
+        "errorFields": "Revisa los campos marcados o inténtalo de nuevo.",
+        "recap": "Del {checkIn} al {checkOut}",
+        "recapStay": "{room} · {adults} adultos{children, plural, =0 {} other {, # niños}}"
+      },
+      "success": {
+        "title": "Solicitud enviada",
+        "body": "Recibimos tu solicitud y te contactaremos pronto para confirmar disponibilidad, traslados y detalles finales.",
+        "again": "Hacer otra reserva"
+      },
+      "roomChoice": {
+        "dorm": "Dormitorio Premium",
+        "private": "Suite Privada",
+        "dormDesc": "{price} / noche / persona",
+        "privateDesc": "{price} / noche / habitación"
+      }
+    }
+  },
+  "footer": {
+    "ctaKicker": "¿Listo para surfear?",
+    "ctaTitleStart": "Tu capítulo marroquí",
+    "ctaTitleAccent": "empieza en SeArt.",
+    "ctaCheck": "Ver disponibilidad",
+    "ctaWhatsapp": "WhatsApp",
+    "tagline": "Surfea, alójate, trabaja y desconecta en Tamraght, a minutos de Banana Beach y las mejores olas atlánticas de Marruecos.",
+    "explore": "Explorar",
+    "visit": "Visitar",
+    "contact": "Contacto",
+    "rights": "© 2026 SeArt Surf Camp. Todos los derechos reservados.",
+    "signature": "Hecho con sal, sol y océano."
+  },
+  "pages": {
+    "about": {
+      "kicker": "Sobre el camp",
+      "title": "Diseñado para viajeros que buscan surf, comodidad y comunidad.",
+      "subtitle": "SeArt Surf Camp está en Tamraght, cerca de Banana Beach y la costa clásica de surf de Agadir. Días de surf de calidad, hospitalidad marroquí cálida, espacios compartidos tranquilos y suficiente flexibilidad para principiantes, viajeros solos y nómadas digitales.",
+      "valuesTitle": "Cuatro cosas que nos obsesionan.",
+      "values": {
+        "waves": { "title": "Surf adaptado a tu nivel", "copy": "Las clases y elección de spots se ajustan a las condiciones y tu confianza en el agua." },
+        "rooftop": { "title": "Ritmo social de azotea", "copy": "Desayuno, atardeceres y noches relajadas: fácil conocer gente sin forzar ambiente de hostel-fiesta." },
+        "remote": { "title": "Amigable con teletrabajo", "copy": "Wi-Fi, rincones más tranquilos y paquetes largos hacen viables los días de trabajo entre sesiones de surf." },
+        "food": { "title": "Cultura culinaria marroquí", "copy": "Comidas locales frescas, opciones dietéticas y cenas compartidas son parte de la estancia." }
+      },
+      "whereKicker": "Dónde estamos",
+      "whereTitleStart": "Tamraght te da la costa surf sin perder",
+      "whereTitleAccent": "el ambiente local.",
+      "whereCopy": "Estás cerca de spots de surf, cafés, mercados y aeropuerto de Agadir manteniendo un ambiente de pueblo más tranquilo."
+    },
+    "rooms": {
+      "kicker": "Habitaciones",
+      "title": "Elige la estancia que se ajusta a tu viaje.",
+      "subtitle": "Ambos tipos te mantienen cerca de la vida compartida del camp, la azotea y el horario de surf.",
+      "request": "Solicitar esta habitación",
+      "amenitiesEyebrow": "Cada estancia incluye",
+      "amenities": {
+        "wifi": "Wi-Fi rápido",
+        "storage": "Almacenamiento seguro",
+        "shared": "Espacios compartidos limpios"
+      },
+      "dormPoints": ["Cortinas de privacidad", "Luces de lectura", "Casilleros", "Baño compartido"],
+      "privatePoints": ["Cama queen", "Ambiente privado", "Decoración bohemia costera", "Ideal para estancias largas"],
+      "dormCopy": "Opción social y económica para viajeros solos, amigos y cualquiera que quiera integrarse rápido con la comunidad del camp.",
+      "privateCopy": "Base más tranquila para parejas, teletrabajadores o viajeros que buscan privacidad manteniendo acceso a la experiencia del camp.",
+      "perNightPerson": "/ noche / persona",
+      "perNightRoom": "/ noche / habitación"
+    },
+    "packages": {
+      "kicker": "Paquetes",
+      "title": "Elige el ritmo de tus vacaciones de surf en Marruecos.",
+      "subtitle": "Todos los paquetes incluyen alojamiento, desayuno, instalaciones del camp y orientación local. Confirmamos fechas exactas y disponibilidad tras tu solicitud.",
+      "requestDates": "Solicitar fechas",
+      "popular": "Popular",
+      "select": "Elegir paquete",
+      "customKicker": "¿Necesitas algo personalizado?",
+      "customTitleStart": "Cuéntanos sobre tu",
+      "customTitleAccent": "grupo, tu nivel, tus fechas.",
+      "customCta": "Crear estancia a medida"
+    },
+    "gallery": {
+      "kicker": "Galería",
+      "title": "Un vistazo a las olas, habitaciones y momentos compartidos del camp.",
+      "subtitle": "La textura visual real importa para decidir un viaje.",
+      "follow": "Síguenos en Instagram"
+    },
+    "faq": {
+      "kicker": "FAQ",
+      "title": "Respuestas útiles antes de llegar.",
+      "subtitle": "Para cualquier cosa específica sobre tus fechas, nivel de surf o traslado, envía un mensaje y confirmaremos directamente.",
+      "stillTitle": "¿Más preguntas?",
+      "stillBody": "Envía tus fechas de viaje, tamaño de grupo y nivel de surf. Te ayudamos a elegir la estancia correcta.",
+      "stillCta": "WhatsApp"
+    },
+    "contact": {
+      "kicker": "Contacto",
+      "title": "Cuéntanos tus fechas y daremos forma a la estancia.",
+      "subtitle": "Comparte el tamaño de tu grupo, nivel de surf, tipo de habitación preferida y aeropuerto de llegada. Lo más rápido para confirmar es WhatsApp.",
+      "visit": "Visitar",
+      "findUsStart": "Encuéntranos en el corazón de",
+      "findUsAccent": "Tamraght.",
+      "cards": {
+        "whatsapp": "WhatsApp",
+        "email": "Email",
+        "instagram": "Instagram",
+        "maps": "Google Maps",
+        "openInMaps": "Abrir en Maps"
+      }
+    }
+  }
+}

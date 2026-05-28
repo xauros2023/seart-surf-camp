@@ -3,9 +3,29 @@
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, ArrowRight, Bed, Calendar, CheckCircle, CreditCard, Loader2, UserRound } from "lucide-react";
+import { useTranslations } from "next-intl";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Bed,
+  Calendar,
+  CheckCircle,
+  CreditCard,
+  IdCard,
+  Loader2,
+  Minus,
+  Plus,
+  UserRound,
+} from "lucide-react";
 import { submitBooking } from "@/app/actions";
-import { BookingInput, RoomType, calculateNights, parsePrice } from "@/lib/content";
+import {
+  BookingInput,
+  IdDocumentType,
+  RoomType,
+  calculateNights,
+  parsePrice,
+} from "@/lib/content";
+import { useCurrency } from "@/components/providers/CurrencyProvider";
 
 type BookingStatus = "idle" | "loading" | "success" | "error";
 type FieldErrors = Partial<Record<keyof BookingInput, string>>;
@@ -19,8 +39,13 @@ const defaultFormData: BookingInput = {
   checkIn: "",
   checkOut: "",
   guests: "1",
+  adults: "1",
+  childrenHalf: "0",
+  childrenFree: "0",
   roomType: "dorm",
   message: "",
+  idType: "",
+  idNumber: "",
 };
 
 const stepVariants = {
@@ -29,7 +54,17 @@ const stepVariants = {
   exit: { opacity: 0, x: -24 },
 };
 
-export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: string; privatePrice: string }) {
+const ID_TYPES: IdDocumentType[] = ["national_id", "residence_permit", "passport", "driver_license"];
+
+export default function BookingWizard({
+  dormPrice,
+  privatePrice,
+}: {
+  dormPrice: string;
+  privatePrice: string;
+}) {
+  const t = useTranslations("booking.wizard");
+  const { format } = useCurrency();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<BookingInput>(defaultFormData);
   const [status, setStatus] = useState<BookingStatus>("idle");
@@ -39,11 +74,17 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
     () => calculateNights(formData.checkIn, formData.checkOut),
     [formData.checkIn, formData.checkOut],
   );
-  const estimatedTotal = useMemo(() => {
-    const guests = Number.parseInt(formData.guests, 10);
-    const price = parsePrice(formData.roomType === "dorm" ? dormPrice : privatePrice);
-    return nights * price * (formData.roomType === "dorm" ? guests : 1);
-  }, [dormPrice, formData.guests, formData.roomType, nights, privatePrice]);
+
+  const adultsN = Number.parseInt(formData.adults || "0", 10) || 0;
+  const kidsHalfN = Number.parseInt(formData.childrenHalf || "0", 10) || 0;
+  const kidsFreeN = Number.parseInt(formData.childrenFree || "0", 10) || 0;
+
+  const estimatedTotalEur = useMemo(() => {
+    const nightly = parsePrice(formData.roomType === "dorm" ? dormPrice : privatePrice);
+    const personUnits = formData.roomType === "dorm" ? Math.max(1, adultsN) : 1;
+    const kidSupplement = kidsHalfN * 0.5;
+    return Math.round(nights * nightly * (personUnits + kidSupplement));
+  }, [dormPrice, privatePrice, formData.roomType, nights, adultsN, kidsHalfN]);
 
   const updateField = (field: keyof BookingInput, value: string) => {
     setFormData((current) => ({ ...current, [field]: value }));
@@ -56,6 +97,12 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
 
   const canContinueDates = formData.checkIn !== "" && formData.checkOut !== "" && nights > 0;
   const canSubmit = formData.name.trim() !== "" && formData.email.trim() !== "" && formData.phone.trim() !== "";
+
+  const canGoToStep = (target: number) => {
+    if (target === 1) return true;
+    if (target === 2 || target === 3) return canContinueDates;
+    return false;
+  };
 
   const handleSubmit = async () => {
     setStatus("loading");
@@ -90,10 +137,10 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
           >
             <CheckCircle size={42} aria-hidden="true" />
           </motion.div>
-          <h3 className="mb-3 font-serif text-3xl font-medium tracking-tight">Request sent</h3>
-          <p className="mx-auto mb-8 max-w-md text-foreground/65">
-            We received your request and will contact you shortly to confirm availability, transfers and final details.
-          </p>
+          <h3 className="mb-3 font-serif text-3xl font-medium tracking-tight">
+            {t("success.title")}
+          </h3>
+          <p className="mx-auto mb-8 max-w-md text-foreground/65">{t("success.body")}</p>
           <button
             type="button"
             onClick={() => {
@@ -103,7 +150,7 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
             }}
             className="font-semibold text-ocean-dark underline-offset-4 hover:underline dark:text-ocean"
           >
-            Make another booking
+            {t("success.again")}
           </button>
         </div>
       </motion.div>
@@ -111,21 +158,13 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
   }
 
   const steps = [
-    { number: 1, label: "Dates", icon: Calendar },
-    { number: 2, label: "Stay", icon: Bed },
-    { number: 3, label: "Contact", icon: UserRound },
-  ];
-
-  // A step is "reachable" if every previous step was filled in correctly
-  const canGoToStep = (target: number) => {
-    if (target === 1) return true;
-    if (target === 2) return canContinueDates;
-    if (target === 3) return canContinueDates;
-    return false;
-  };
+    { number: 1, labelKey: "stepDates", icon: Calendar },
+    { number: 2, labelKey: "stepStay", icon: Bed },
+    { number: 3, labelKey: "stepContact", icon: UserRound },
+  ] as const;
 
   return (
-    <div className="flex min-h-[520px] flex-col">
+    <div className="flex min-h-[560px] flex-col">
       {/* Progress steps */}
       <div className="mb-8">
         <div className="mb-4 grid grid-cols-3 gap-3">
@@ -144,8 +183,7 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
                 disabled={!isClickable}
                 whileTap={isClickable ? { scale: 0.97 } : undefined}
                 aria-current={current ? "step" : undefined}
-                aria-label={`Step ${item.number}: ${item.label}${current ? " (current)" : ""}`}
-                className={`relative overflow-hidden rounded-2xl border px-4 py-3.5 text-left text-sm font-semibold transition-all duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta ${
+                className={`relative overflow-hidden rounded-2xl border px-4 py-3.5 text-start text-sm font-semibold transition-all duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta ${
                   current
                     ? "border-terracotta bg-terracotta/[0.10] text-terracotta shadow-glow-terracotta cursor-default"
                     : active
@@ -156,9 +194,9 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
                 }`}
               >
                 <Icon className="mb-2" size={16} aria-hidden="true" />
-                <span className="block">{item.label}</span>
+                <span className="block">{t(item.labelKey)}</span>
                 <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.18em] opacity-60">
-                  Step {item.number}
+                  {t("stepCount")} {item.number}
                 </span>
               </motion.button>
             );
@@ -186,11 +224,11 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-1 flex-col"
           >
-            <h3 className="mb-6 font-serif text-2xl font-medium tracking-tight">When are you joining us?</h3>
+            <h3 className="mb-6 font-serif text-2xl font-medium tracking-tight">{t("dates.title")}</h3>
             <div className="grid gap-5 sm:grid-cols-2">
               <FieldError id="checkIn-error" message={fieldErrors.checkIn}>
                 <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/55" htmlFor="checkIn">
-                  Check-in
+                  {t("dates.checkIn")}
                 </label>
                 <input
                   id="checkIn"
@@ -200,12 +238,11 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
                   onChange={(event) => updateField("checkIn", event.target.value)}
                   onInput={(event) => updateField("checkIn", event.currentTarget.value)}
                   className="form-field"
-                  aria-describedby={fieldErrors.checkIn ? "checkIn-error" : undefined}
                 />
               </FieldError>
               <FieldError id="checkOut-error" message={fieldErrors.checkOut}>
                 <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/55" htmlFor="checkOut">
-                  Check-out
+                  {t("dates.checkOut")}
                 </label>
                 <input
                   id="checkOut"
@@ -215,12 +252,11 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
                   onChange={(event) => updateField("checkOut", event.target.value)}
                   onInput={(event) => updateField("checkOut", event.currentTarget.value)}
                   className="form-field"
-                  aria-describedby={fieldErrors.checkOut ? "checkOut-error" : undefined}
                 />
               </FieldError>
             </div>
             {formData.checkIn && formData.checkOut && nights === 0 && (
-              <p className="mt-4 text-sm font-semibold text-red-500">Check-out must be after check-in.</p>
+              <p className="mt-4 text-sm font-semibold text-red-500">{t("dates.errorOrder")}</p>
             )}
             <button
               type="button"
@@ -228,7 +264,7 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
               disabled={!canContinueDates}
               className="primary-button mt-auto"
             >
-              Continue <ArrowRight className="ml-1 transition-transform duration-300" size={18} aria-hidden="true" />
+              {t("dates.continue")} <ArrowRight className="ml-1" size={18} aria-hidden="true" />
             </button>
           </motion.div>
         )}
@@ -243,38 +279,51 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-1 flex-col"
           >
-            <h3 className="mb-6 font-serif text-2xl font-medium tracking-tight">Choose your comfort</h3>
+            <h3 className="mb-6 font-serif text-2xl font-medium tracking-tight">{t("stay.title")}</h3>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <RoomChoice
                 active={formData.roomType === "dorm"}
-                title="Premium Dorm"
-                description={`${dormPrice} / night / person`}
+                title={t("roomChoice.dorm")}
+                description={t("roomChoice.dormDesc", { price: dormPrice })}
                 onClick={() => chooseRoom("dorm")}
               />
               <RoomChoice
                 active={formData.roomType === "private"}
-                title="Private Suite"
-                description={`${privatePrice} / night / room`}
+                title={t("roomChoice.private")}
+                description={t("roomChoice.privateDesc", { price: privatePrice })}
                 onClick={() => chooseRoom("private")}
               />
             </div>
 
-            <div className="mt-5">
-              <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/55" htmlFor="guests">
-                Number of guests
-              </label>
-              <select
-                id="guests"
-                value={formData.guests}
-                onChange={(event) => updateField("guests", event.target.value)}
-                className="form-field"
-              >
-                {[1, 2, 3, 4, 5, 6].map((number) => (
-                  <option key={number} value={number}>
-                    {number} {number === 1 ? "person" : "people"}
-                  </option>
-                ))}
-              </select>
+            <p className="mt-6 mb-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/55">
+              {t("stay.guestsTitle")}
+            </p>
+            <div className="grid gap-3">
+              <Counter
+                label={t("stay.adults")}
+                help={t("stay.adultsHelp")}
+                value={adultsN}
+                min={1}
+                max={8}
+                onChange={(n) => updateField("adults", String(n))}
+              />
+              <Counter
+                label={t("stay.childrenHalf")}
+                help={t("stay.childrenHalfHelp")}
+                value={kidsHalfN}
+                min={0}
+                max={6}
+                onChange={(n) => updateField("childrenHalf", String(n))}
+              />
+              <Counter
+                label={t("stay.childrenFree")}
+                help={t("stay.childrenFreeHelp")}
+                value={kidsFreeN}
+                min={0}
+                max={4}
+                onChange={(n) => updateField("childrenFree", String(n))}
+              />
             </div>
 
             <motion.div
@@ -283,27 +332,25 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
               className="mt-6 rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-5"
             >
               <div className="flex items-center justify-between text-sm text-foreground/65">
-                <span className="font-medium">
-                  {nights} {nights === 1 ? "night" : "nights"}
-                </span>
+                <span className="font-medium">{t("stay.nights", { count: nights })}</span>
                 <motion.span
-                  key={estimatedTotal}
+                  key={estimatedTotalEur}
                   initial={{ scale: 0.85, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                   className="font-serif text-3xl font-medium text-terracotta"
                 >
-                  {estimatedTotal}€
+                  {format(estimatedTotalEur)}
                 </motion.span>
               </div>
             </motion.div>
 
             <div className="mt-auto flex gap-3 pt-6">
-              <button type="button" onClick={() => setStep(1)} className="secondary-icon-button" aria-label="Back to dates">
+              <button type="button" onClick={() => setStep(1)} className="secondary-icon-button" aria-label={t("stay.back")}>
                 <ArrowLeft size={18} aria-hidden="true" />
               </button>
               <button type="button" onClick={() => setStep(3)} className="primary-button">
-                Continue <ArrowRight className="ml-1" size={18} aria-hidden="true" />
+                {t("stay.continue")} <ArrowRight className="ml-1" size={18} aria-hidden="true" />
               </button>
             </div>
           </motion.div>
@@ -319,11 +366,11 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-1 flex-col"
           >
-            <h3 className="mb-6 font-serif text-2xl font-medium tracking-tight">Send your request</h3>
+            <h3 className="mb-6 font-serif text-2xl font-medium tracking-tight">{t("contact.title")}</h3>
             <div className="grid gap-4">
               <FieldError id="name-error" message={fieldErrors.name}>
                 <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/55" htmlFor="name">
-                  Full name
+                  {t("contact.name")}
                 </label>
                 <input
                   id="name"
@@ -331,13 +378,12 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
                   onChange={(event) => updateField("name", event.target.value)}
                   className="form-field"
                   autoComplete="name"
-                  aria-describedby={fieldErrors.name ? "name-error" : undefined}
                 />
               </FieldError>
               <div className="grid gap-4 sm:grid-cols-2">
                 <FieldError id="email-error" message={fieldErrors.email}>
                   <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/55" htmlFor="email">
-                    Email
+                    {t("contact.email")}
                   </label>
                   <input
                     id="email"
@@ -346,12 +392,11 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
                     onChange={(event) => updateField("email", event.target.value)}
                     className="form-field"
                     autoComplete="email"
-                    aria-describedby={fieldErrors.email ? "email-error" : undefined}
                   />
                 </FieldError>
                 <FieldError id="phone-error" message={fieldErrors.phone}>
                   <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/55" htmlFor="phone">
-                    WhatsApp / phone
+                    {t("contact.phone")}
                   </label>
                   <input
                     id="phone"
@@ -359,22 +404,64 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
                     onChange={(event) => updateField("phone", event.target.value)}
                     className="form-field"
                     autoComplete="tel"
-                    aria-describedby={fieldErrors.phone ? "phone-error" : undefined}
                   />
                 </FieldError>
               </div>
+
+              {/* ID Document — optional */}
+              <div className="mt-2 rounded-2xl border border-foreground/10 bg-foreground/[0.025] p-4">
+                <div className="mb-3 flex items-start gap-2.5">
+                  <IdCard size={16} className="mt-0.5 shrink-0 text-terracotta" />
+                  <div>
+                    <p className="text-sm font-semibold">{t("contact.idHeader")}</p>
+                    <p className="text-xs text-foreground/55">{t("contact.idHelp")}</p>
+                  </div>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-[1fr_1.2fr]">
+                  <div>
+                    <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/55" htmlFor="idType">
+                      {t("contact.idType")}
+                    </label>
+                    <select
+                      id="idType"
+                      value={formData.idType || ""}
+                      onChange={(event) => updateField("idType", event.target.value)}
+                      className="form-field"
+                    >
+                      <option value="">—</option>
+                      {ID_TYPES.map((type) => (
+                        <option key={type} value={type}>
+                          {t(`contact.idTypes.${type}`)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <FieldError id="idNumber-error" message={fieldErrors.idNumber}>
+                    <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/55" htmlFor="idNumber">
+                      {t("contact.idNumber")}
+                    </label>
+                    <input
+                      id="idNumber"
+                      value={formData.idNumber || ""}
+                      onChange={(event) => updateField("idNumber", event.target.value)}
+                      className="form-field"
+                      autoComplete="off"
+                    />
+                  </FieldError>
+                </div>
+              </div>
+
               <FieldError id="message-error" message={fieldErrors.message}>
                 <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/55" htmlFor="message">
-                  Notes
+                  {t("contact.message")}
                 </label>
                 <textarea
                   id="message"
-                  placeholder="Airport transfer, surf level, dietary needs..."
+                  placeholder={t("contact.messagePlaceholder")}
                   value={formData.message}
                   onChange={(event) => updateField("message", event.target.value)}
                   rows={3}
                   className="form-field resize-none"
-                  aria-describedby={fieldErrors.message ? "message-error" : undefined}
                 />
               </FieldError>
             </div>
@@ -383,15 +470,19 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
               <div className="flex items-center justify-between gap-4">
                 <div className="text-sm text-foreground/70">
                   <p className="font-medium text-foreground">
-                    {formData.checkIn} to {formData.checkOut}
+                    {t("contact.recap", { checkIn: formData.checkIn, checkOut: formData.checkOut })}
                   </p>
                   <p className="capitalize">
-                    {formData.roomType} · {formData.guests} guests
+                    {t("contact.recapStay", {
+                      room: formData.roomType === "dorm" ? t("roomChoice.dorm") : t("roomChoice.private"),
+                      adults: adultsN,
+                      children: kidsHalfN + kidsFreeN,
+                    })}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 font-serif text-3xl font-medium text-terracotta">
                   <CreditCard size={20} aria-hidden="true" />
-                  {estimatedTotal}€
+                  {format(estimatedTotalEur)}
                 </div>
               </div>
             </div>
@@ -402,7 +493,7 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
                 onClick={() => setStep(2)}
                 disabled={status === "loading"}
                 className="secondary-icon-button"
-                aria-label="Back to stay"
+                aria-label={t("contact.back")}
               >
                 <ArrowLeft size={18} aria-hidden="true" />
               </button>
@@ -415,10 +506,10 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
                 {status === "loading" ? (
                   <>
                     <Loader2 className="animate-spin" size={18} aria-hidden="true" />
-                    Sending...
+                    {t("contact.sending")}
                   </>
                 ) : (
-                  "Submit reservation"
+                  t("contact.submit")
                 )}
               </button>
             </div>
@@ -428,7 +519,7 @@ export default function BookingWizard({ dormPrice, privatePrice }: { dormPrice: 
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-4 text-center text-sm font-semibold text-red-500"
               >
-                Please check the highlighted fields or try again in a moment.
+                {t("contact.errorFields")}
               </motion.p>
             )}
           </motion.div>
@@ -454,7 +545,7 @@ function RoomChoice({
       type="button"
       onClick={onClick}
       whileTap={{ scale: 0.98 }}
-      className={`relative overflow-hidden rounded-2xl border p-5 text-left transition-all duration-500 ${
+      className={`relative overflow-hidden rounded-2xl border p-5 text-start transition-all duration-500 ${
         active
           ? "border-ocean bg-ocean/[0.08] shadow-glow-ocean"
           : "border-foreground/10 hover:border-foreground/25 hover:bg-foreground/[0.03]"
@@ -466,12 +557,60 @@ function RoomChoice({
         <motion.span
           layoutId="room-choice-dot"
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute right-4 top-4 grid size-6 place-items-center rounded-full bg-ocean text-white"
+          className="absolute end-4 top-4 grid size-6 place-items-center rounded-full bg-ocean text-white"
         >
           <CheckCircle size={14} />
         </motion.span>
       )}
     </motion.button>
+  );
+}
+
+function Counter({
+  label,
+  help,
+  value,
+  min,
+  max,
+  onChange,
+}: {
+  label: string;
+  help: string;
+  value: number;
+  min: number;
+  max: number;
+  onChange: (next: number) => void;
+}) {
+  const dec = () => onChange(Math.max(min, value - 1));
+  const inc = () => onChange(Math.min(max, value + 1));
+  return (
+    <div className="flex items-center justify-between gap-4 rounded-2xl border border-foreground/10 bg-background/60 p-4">
+      <div className="min-w-0">
+        <p className="font-medium">{label}</p>
+        <p className="text-xs text-foreground/55">{help}</p>
+      </div>
+      <div className="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          onClick={dec}
+          disabled={value <= min}
+          aria-label={`Decrease ${label}`}
+          className="grid size-9 place-items-center rounded-full border border-foreground/15 transition-colors hover:border-foreground/40 hover:bg-foreground/[0.05] disabled:cursor-not-allowed disabled:opacity-30"
+        >
+          <Minus size={14} />
+        </button>
+        <span className="w-6 text-center font-serif text-xl font-medium tabular-nums">{value}</span>
+        <button
+          type="button"
+          onClick={inc}
+          disabled={value >= max}
+          aria-label={`Increase ${label}`}
+          className="grid size-9 place-items-center rounded-full border border-foreground/15 transition-colors hover:border-foreground/40 hover:bg-foreground/[0.05] disabled:cursor-not-allowed disabled:opacity-30"
+        >
+          <Plus size={14} />
+        </button>
+      </div>
+    </div>
   );
 }
 

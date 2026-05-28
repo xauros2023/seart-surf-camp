@@ -1,17 +1,13 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import Marquee from "@/components/motion/Marquee";
 
-const items = [
-  "Banana Beach",
-  "Surf coaching",
-  "Rooftop yoga",
-  "Moroccan food",
-  "Coworking",
-  "Live music",
-  "Paradise Valley",
-  "Sunset sessions",
-];
-
 export default function MarqueeBand() {
+  const t = useTranslations();
+  // next-intl array-of-strings access pattern: read raw array via t.raw
+  const items = t.raw("marquee") as string[];
+
   return (
     <section className="border-y border-foreground/[0.08] bg-foreground/[0.025] py-7">
       <Marquee speed={45}>

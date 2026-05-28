@@ -1,22 +1,36 @@
 "use client";
 
 import { Menu, Waves, X } from "lucide-react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
+import { defaultLocale, type Locale } from "@/i18n/config";
+import CurrencySwitcher from "./CurrencySwitcher";
+import LocaleSwitcher from "./LocaleSwitcher";
 import ThemeToggle from "./ThemeToggle";
 
-const navItems = [
-  { href: "/about", label: "About" },
-  { href: "/rooms", label: "Rooms" },
-  { href: "/packages", label: "Packages" },
-  { href: "/gallery", label: "Gallery" },
-  { href: "/faq", label: "FAQ" },
-  { href: "/contact", label: "Contact" },
-];
+const navKeys = ["about", "rooms", "packages", "gallery", "faq", "contact"] as const;
+const navPaths: Record<(typeof navKeys)[number], string> = {
+  about: "/about",
+  rooms: "/rooms",
+  packages: "/packages",
+  gallery: "/gallery",
+  faq: "/faq",
+  contact: "/contact",
+};
+
+/**
+ * Build a locale-aware href. With "as-needed" mode, default locale (EN) is unprefixed.
+ */
+function localizedHref(locale: Locale, path: string): string {
+  if (locale === defaultLocale) return path;
+  return `/${locale}${path}`;
+}
 
 export default function SiteHeader() {
+  const t = useTranslations("nav");
+  const locale = useLocale() as Locale;
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -33,7 +47,13 @@ export default function SiteHeader() {
     }
   });
 
-  const isActive = (href: string) => pathname === href;
+  const stripLocale = (path: string) => {
+    const segments = path.split("/").filter(Boolean);
+    if (segments[0] && segments[0].length === 2) segments.shift();
+    return `/${segments.join("/")}`;
+  };
+  const currentPath = stripLocale(pathname);
+  const isActive = (path: string) => currentPath === path;
 
   return (
     <motion.header
@@ -51,13 +71,12 @@ export default function SiteHeader() {
           scrolled ? "h-16" : "h-20"
         }`}
       >
-        <Link
-          href="/"
+        <a
+          href={localizedHref(locale, "/")}
           className="group flex items-center gap-2.5 font-bold tracking-tight"
           onClick={() => setOpen(false)}
         >
           <motion.span
-            animate={{ rotate: scrolled ? 0 : 0 }}
             whileHover={{ rotate: -8, scale: 1.05 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="grid size-9 place-items-center rounded-full bg-terracotta/12 text-terracotta"
@@ -65,43 +84,48 @@ export default function SiteHeader() {
             <Waves size={20} aria-hidden="true" />
           </motion.span>
           <span className="text-2xl font-serif font-medium tracking-tight">SeArt.</span>
-        </Link>
+        </a>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                isActive(item.href)
-                  ? "text-foreground"
-                  : "text-foreground/65 hover:text-foreground"
-              }`}
-            >
-              {isActive(item.href) && (
-                <motion.span
-                  layoutId="nav-active"
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute inset-0 -z-10 rounded-full bg-foreground/[0.07] dark:bg-white/[0.08]"
-                />
-              )}
-              {item.label}
-            </Link>
-          ))}
+          {navKeys.map((key) => {
+            const path = navPaths[key];
+            return (
+              <a
+                key={key}
+                href={localizedHref(locale, path)}
+                className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                  isActive(path)
+                    ? "text-foreground"
+                    : "text-foreground/65 hover:text-foreground"
+                }`}
+              >
+                {isActive(path) && (
+                  <motion.span
+                    layoutId="nav-active"
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0 -z-10 rounded-full bg-foreground/[0.07] dark:bg-white/[0.08]"
+                  />
+                )}
+                {t(key)}
+              </a>
+            );
+          })}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <CurrencySwitcher />
+          <LocaleSwitcher />
           <ThemeToggle />
-          <Link
-            href="/#booking"
+          <a
+            href={localizedHref(locale, "/#booking")}
             className="hidden items-center gap-1.5 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background shadow-soft transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_18px_45px_-12px_rgba(31,42,37,0.5)] sm:inline-flex"
           >
-            Book Now
-          </Link>
+            {t("bookNow")}
+          </a>
           <button
             type="button"
             className="grid size-10 place-items-center rounded-full border border-foreground/10 bg-background/70 lg:hidden"
-            aria-label={open ? "Close navigation" : "Open navigation"}
+            aria-label={open ? t("closeMenu") : t("openMenu")}
             aria-expanded={open}
             onClick={() => setOpen((value) => !value)}
           >
@@ -142,34 +166,37 @@ export default function SiteHeader() {
             className="border-t border-foreground/10 bg-background/[0.98] px-5 py-5 backdrop-blur-2xl lg:hidden"
           >
             <nav className="mx-auto grid max-w-7xl gap-1.5" aria-label="Mobile navigation">
-              {navItems.map((item, index) => (
-                <motion.div
-                  key={item.href}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.05 + index * 0.04, duration: 0.4 }}
-                >
-                  <Link
-                    href={item.href}
-                    className={`flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-semibold transition-colors ${
-                      isActive(item.href)
-                        ? "bg-foreground/[0.08] text-foreground"
-                        : "text-foreground/75 hover:bg-foreground/[0.05]"
-                    }`}
-                    onClick={() => setOpen(false)}
+              {navKeys.map((key, index) => {
+                const path = navPaths[key];
+                return (
+                  <motion.div
+                    key={key}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 + index * 0.04, duration: 0.4 }}
                   >
-                    {item.label}
-                    <span className="text-foreground/30" aria-hidden="true">→</span>
-                  </Link>
-                </motion.div>
-              ))}
-              <Link
-                href="/#booking"
+                    <a
+                      href={localizedHref(locale, path)}
+                      className={`flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-semibold transition-colors ${
+                        isActive(path)
+                          ? "bg-foreground/[0.08] text-foreground"
+                          : "text-foreground/75 hover:bg-foreground/[0.05]"
+                      }`}
+                      onClick={() => setOpen(false)}
+                    >
+                      {t(key)}
+                      <span className="text-foreground/30" aria-hidden="true">→</span>
+                    </a>
+                  </motion.div>
+                );
+              })}
+              <a
+                href={localizedHref(locale, "/#booking")}
                 className="mt-3 rounded-full bg-foreground px-5 py-3.5 text-center font-semibold text-background"
                 onClick={() => setOpen(false)}
               >
-                Book Now
-              </Link>
+                {t("bookNow")}
+              </a>
             </nav>
           </motion.div>
         )}

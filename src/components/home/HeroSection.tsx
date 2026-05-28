@@ -5,10 +5,12 @@ import Link from "next/link";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { useRef } from "react";
 import { ArrowRight, ChevronDown } from "lucide-react";
+import { useTranslations } from "next-intl";
 import AnimatedText from "@/components/motion/AnimatedText";
 import MagneticButton from "@/components/motion/MagneticButton";
 
 export default function HeroSection({ title, subtitle }: { title: string; subtitle: string }) {
+  const t = useTranslations("hero");
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({
@@ -61,12 +63,12 @@ export default function HeroSection({ title, subtitle }: { title: string; subtit
           className="mb-7 inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/[0.08] px-4 py-2 text-xs font-medium uppercase tracking-[0.22em] text-white/85 backdrop-blur-md"
         >
           <span className="size-1.5 rounded-full bg-terracotta" />
-          Tamraght · Banana Beach
+          {t("kicker")}
         </motion.div>
 
         <div className="max-w-5xl">
           <AnimatedText
-            text={title}
+            text={title || t("title")}
             as="h1"
             className="font-serif text-[2.5rem] font-medium leading-[1] tracking-[-0.025em] sm:text-6xl sm:leading-[0.95] md:text-7xl lg:text-[7.5rem]"
           />
@@ -77,7 +79,7 @@ export default function HeroSection({ title, subtitle }: { title: string; subtit
             transition={{ duration: 0.9, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
             className="mt-6 max-w-2xl text-base leading-[1.65] text-white/80 sm:mt-8 sm:text-lg lg:text-xl"
           >
-            {subtitle}
+            {subtitle || t("subtitle")}
           </motion.p>
         </div>
 
@@ -89,13 +91,13 @@ export default function HeroSection({ title, subtitle }: { title: string; subtit
         >
           <MagneticButton strength={0.25}>
             <Link href="#booking" className="hero-button group">
-              Check availability
+              {t("ctaPrimary")}
               <ArrowRight size={18} className="ml-2 transition-transform duration-500 group-hover:translate-x-1" />
             </Link>
           </MagneticButton>
           <MagneticButton strength={0.18}>
             <Link href="/packages" className="hero-button-secondary">
-              Explore packages
+              {t("ctaSecondary")}
             </Link>
           </MagneticButton>
         </motion.div>
@@ -112,7 +114,7 @@ export default function HeroSection({ title, subtitle }: { title: string; subtit
           transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
           className="flex flex-col items-center gap-2 text-[10px] font-medium uppercase tracking-[0.3em]"
         >
-          Scroll
+          {t("scroll")}
           <ChevronDown size={16} />
         </motion.div>
       </motion.div>

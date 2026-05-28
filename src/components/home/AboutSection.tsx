@@ -3,41 +3,41 @@
 import Image from "next/image";
 import { motion } from "motion/react";
 import { Coffee, Music, Star, Users, Waves } from "lucide-react";
+import { useTranslations } from "next-intl";
 import SectionReveal from "@/components/motion/SectionReveal";
 import { StaggerContainer, StaggerItem } from "@/components/motion/Stagger";
 
 const highlights = [
-  { icon: Waves, label: "World-class waves" },
-  { icon: Coffee, label: "Oceanview rooftop" },
-  { icon: Music, label: "Live music nights" },
-  { icon: Users, label: "Friendly community" },
-];
+  { key: "waves", icon: Waves },
+  { key: "rooftop", icon: Coffee },
+  { key: "music", icon: Music },
+  { key: "community", icon: Users },
+] as const;
 
 export default function AboutSection() {
+  const t = useTranslations("about");
+
   return (
     <section id="about" className="section-shell">
       <div className="grid items-center gap-14 lg:grid-cols-[1fr_1.05fr]">
         <div>
           <SectionReveal>
-            <p className="section-kicker">Tamraght, Morocco</p>
+            <p className="section-kicker">{t("kicker")}</p>
           </SectionReveal>
           <SectionReveal delay={0.1}>
             <h2 className="section-title text-balance">
-              A surf camp for waves, work and <span className="font-serif italic text-terracotta">slow Moroccan days.</span>
+              {t("titleStart")} <span className="font-serif italic text-terracotta">{t("titleAccent")}</span>
             </h2>
           </SectionReveal>
           <SectionReveal delay={0.2}>
-            <p className="section-copy text-pretty">
-              SeArt is minutes from Banana Beach and built for travelers who want more than a bed: coached surf sessions,
-              a warm social rhythm, reliable work corners and simple access to the Agadir coast.
-            </p>
+            <p className="section-copy text-pretty">{t("copy")}</p>
           </SectionReveal>
 
           <StaggerContainer className="mt-10 grid gap-3 sm:grid-cols-2" staggerChildren={0.07}>
             {highlights.map((item) => {
               const Icon = item.icon;
               return (
-                <StaggerItem key={item.label}>
+                <StaggerItem key={item.key}>
                   <motion.div
                     whileHover={{ y: -3 }}
                     transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -46,7 +46,7 @@ export default function AboutSection() {
                     <span className="grid size-10 place-items-center rounded-full bg-terracotta/[0.1] text-terracotta transition-colors group-hover:bg-terracotta/[0.18]">
                       <Icon size={18} aria-hidden="true" />
                     </span>
-                    <span className="font-medium">{item.label}</span>
+                    <span className="font-medium">{t(`highlights.${item.key}`)}</span>
                   </motion.div>
                 </StaggerItem>
               );
@@ -87,10 +87,10 @@ export default function AboutSection() {
                 ))}
               </div>
               <p className="mb-2 font-serif text-xl font-medium leading-tight">
-                &ldquo;The best hostel in Morocco!&rdquo;
+                &ldquo;{t("review.quote")}&rdquo;
               </p>
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-white/50">
-                HostelWorld Reviews
+                {t("review.source")}
               </p>
             </motion.div>
           </div>

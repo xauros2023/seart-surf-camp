@@ -3,6 +3,7 @@ import { BedDouble, Lock, ShowerHead, Tent, Wifi } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import PageHero from "@/components/PageHero";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
@@ -11,30 +12,32 @@ import { StaggerContainer, StaggerItem } from "@/components/motion/Stagger";
 import Noise from "@/components/motion/Noise";
 import { getSiteContent } from "@/lib/data-store";
 
-export const metadata: Metadata = {
-  title: "Rooms",
-  description:
-    "Dorm and private room options at SeArt Surf Camp in Tamraght, with Wi-Fi, lockers, shared spaces and rooftop access.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "pages.rooms" });
+  return { title: t("kicker"), description: t("subtitle") };
+}
 
-const amenities = [
-  { icon: Wifi, label: "Fast Wi-Fi" },
-  { icon: Lock, label: "Secure storage" },
-  { icon: ShowerHead, label: "Clean shared spaces" },
-];
+const amenityKeys = [
+  { key: "wifi", icon: Wifi },
+  { key: "storage", icon: Lock },
+  { key: "shared", icon: ShowerHead },
+] as const;
 
-export default async function RoomsPage() {
+export default async function RoomsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("pages.rooms");
   const content = await getSiteContent();
+
+  const dormPoints = t.raw("dormPoints") as string[];
+  const privatePoints = t.raw("privatePoints") as string[];
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <SiteHeader />
       <main>
-        <PageHero
-          kicker="Rooms"
-          title="Choose the stay that fits your trip."
-          subtitle="Both room types keep you close to shared camp life, the rooftop and the surf schedule."
-        />
+        <PageHero kicker={t("kicker")} title={t("title")} subtitle={t("subtitle")} />
 
         <section className="section-shell pt-4">
           <StaggerContainer className="grid gap-6 lg:grid-cols-2" staggerChildren={0.12}>
@@ -42,20 +45,22 @@ export default async function RoomsPage() {
               <RoomDetail
                 title="Premium Dorms"
                 icon={<Tent size={28} aria-hidden="true" />}
-                price={`${content.rooms.dormPrice} / night / person`}
+                price={`${content.rooms.dormPrice} ${t("perNightPerson")}`}
                 image="/images/room-dorm.webp"
-                copy="A social and budget-friendly option for solo travelers, friends and anyone who wants to meet the camp community quickly."
-                points={["Privacy curtains", "Reading lights", "Lockers", "Shared bathroom access"]}
+                copy={t("dormCopy")}
+                points={dormPoints}
+                cta={t("request")}
               />
             </StaggerItem>
             <StaggerItem>
               <RoomDetail
                 title="Private Suites"
                 icon={<BedDouble size={28} aria-hidden="true" />}
-                price={`${content.rooms.privatePrice} / night / room`}
+                price={`${content.rooms.privatePrice} ${t("perNightRoom")}`}
                 image="/images/room-private.webp"
-                copy="A quieter base for couples, remote workers or travelers who want privacy while keeping access to the camp experience."
-                points={["Queen-size bed", "Private feel", "Bohemian coastal decor", "Ideal for longer stays"]}
+                copy={t("privateCopy")}
+                points={privatePoints}
+                cta={t("request")}
               />
             </StaggerItem>
           </StaggerContainer>
@@ -63,18 +68,18 @@ export default async function RoomsPage() {
           <SectionReveal>
             <div className="mt-12">
               <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/50">
-                Every stay includes
+                {t("amenitiesEyebrow")}
               </p>
               <StaggerContainer className="grid gap-3 sm:grid-cols-3" staggerChildren={0.06}>
-                {amenities.map((amenity) => {
+                {amenityKeys.map((amenity) => {
                   const Icon = amenity.icon;
                   return (
-                    <StaggerItem key={amenity.label}>
+                    <StaggerItem key={amenity.key}>
                       <div className="flex items-center gap-4 rounded-2xl border border-foreground/10 bg-foreground/[0.025] p-5 transition-colors hover:bg-foreground/[0.06]">
                         <span className="grid size-11 place-items-center rounded-full bg-ocean/[0.1] text-ocean-dark dark:text-ocean">
                           <Icon size={18} aria-hidden="true" />
                         </span>
-                        <p className="font-medium">{amenity.label}</p>
+                        <p className="font-medium">{t(`amenities.${amenity.key}`)}</p>
                       </div>
                     </StaggerItem>
                   );
@@ -97,6 +102,7 @@ function RoomDetail({
   image,
   copy,
   points,
+  cta,
 }: {
   title: string;
   icon: ReactNode;
@@ -104,6 +110,7 @@ function RoomDetail({
   image: string;
   copy: string;
   points: string[];
+  cta: string;
 }) {
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-foreground/[0.08] bg-surface shadow-soft dark:bg-white/[0.03]">
@@ -133,7 +140,7 @@ function RoomDetail({
           ))}
         </ul>
         <Link href="/#booking" className="primary-button mt-auto pt-4 sm:mt-10">
-          Request this room
+          {cta}
         </Link>
       </div>
     </article>

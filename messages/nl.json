@@ -1,0 +1,263 @@
+{
+  "nav": {
+    "about": "Over ons",
+    "rooms": "Kamers",
+    "packages": "Pakketten",
+    "gallery": "Galerij",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "bookNow": "Boeken",
+    "openMenu": "Menu openen",
+    "closeMenu": "Menu sluiten"
+  },
+  "switcher": {
+    "language": "Taal",
+    "currency": "Valuta"
+  },
+  "hero": {
+    "kicker": "Tamraght · Banana Beach",
+    "title": "Welkom bij SeArt Surf Camp",
+    "subtitle": "Jouw zomertoevlucht aan Banana Beach, Tamraght. Surfen, ontspannen en de echte Marokkaanse sfeer.",
+    "ctaPrimary": "Beschikbaarheid",
+    "ctaSecondary": "Bekijk pakketten",
+    "scroll": "Scroll"
+  },
+  "marquee": [
+    "Banana Beach",
+    "Surf-coaching",
+    "Rooftop-yoga",
+    "Marokkaans eten",
+    "Coworking",
+    "Live muziek",
+    "Paradise Valley",
+    "Zonsondergang-sessies"
+  ],
+  "about": {
+    "kicker": "Tamraght, Marokko",
+    "titleStart": "Een surfkamp voor golven, werk en",
+    "titleAccent": "rustige Marokkaanse dagen.",
+    "copy": "SeArt ligt op minuten van Banana Beach, gemaakt voor reizigers die meer willen dan een bed: begeleide surfsessies, warme sociale sfeer, betrouwbare werkhoeken en eenvoudige toegang tot de kust van Agadir.",
+    "highlights": {
+      "waves": "Wereldklasse golven",
+      "rooftop": "Rooftop met oceaanzicht",
+      "music": "Live muziekavonden",
+      "community": "Vriendelijke community"
+    },
+    "review": {
+      "quote": "Het beste hostel in Marokko!",
+      "source": "HostelWorld-reviews"
+    }
+  },
+  "experiences": {
+    "kicker": "De ervaring",
+    "titleStart": "Alles rond de oceaan,",
+    "titleAccent": "samen in één verblijf.",
+    "seeMore": "Lees het hele kampverhaal",
+    "items": {
+      "coaching": {
+        "eyebrow": "Dagelijks",
+        "title": "Surf-coaching",
+        "desc": "Dagelijkse lessen met materiaal, strandtransport en coaching per niveau."
+      },
+      "daysOut": {
+        "eyebrow": "Avontuur",
+        "title": "Marokkaanse uitstapjes",
+        "desc": "Markten, Paradise Valley, woestijnroutes en rustige avonden na de oceaan."
+      },
+      "nights": {
+        "eyebrow": "Avonden",
+        "title": "Community-avonden",
+        "desc": "Gedeelde diners, live muziek, rooftop-zonsondergangen en kampvuurgesprekken."
+      }
+    }
+  },
+  "testimonials": {
+    "kicker": "Geliefd door reizigers",
+    "titleStart": "Wat ze zeggen",
+    "titleAccent": "nadat ze vertrokken zijn.",
+    "prev": "Vorige getuigenis",
+    "next": "Volgende getuigenis"
+  },
+  "rooms": {
+    "kicker": "Verblijf",
+    "titleStart": "Simpel, comfortabel en",
+    "titleAccent": "dicht bij het strand.",
+    "copy": "Kies een bed in een sociaal dorm of een privékamer. Beide bevatten toegang tot gedeelde ruimtes, rooftop, wifi en kampondersteuning.",
+    "from": "Vanaf",
+    "book": "Boeken",
+    "dorm": {
+      "title": "Premium Dorms",
+      "priceLabel": "/nacht/persoon",
+      "copy": "Stapelbedden met privacygordijnen, leeslampen en kluisjes voor solo-reizigers of vrienden."
+    },
+    "private": {
+      "title": "Privé-suites",
+      "priceLabel": "/nacht/kamer",
+      "copy": "Een rustigere kamer met queen-size bed, privésfeer en bohemian-kust details."
+    }
+  },
+  "booking": {
+    "location": {
+      "title": "Onze locatie",
+      "address1": "Tamraght Ouzdar, Banana Beach",
+      "address2": "Agadir, Marokko"
+    },
+    "map": {
+      "eyebrow": "Banana Beach-toegang",
+      "titleStart": "Tamraght,",
+      "titleAccent": "minuten van de breaks.",
+      "cta": "Open Google Maps"
+    },
+    "wizard": {
+      "stepDates": "Data",
+      "stepStay": "Verblijf",
+      "stepContact": "Contact",
+      "stepCount": "Stap",
+      "dates": {
+        "title": "Wanneer kom je naar ons toe?",
+        "checkIn": "Aankomst",
+        "checkOut": "Vertrek",
+        "errorOrder": "Vertrek moet na aankomst zijn.",
+        "continue": "Doorgaan"
+      },
+      "stay": {
+        "title": "Kies je comfort",
+        "guestsTitle": "Wie reist mee?",
+        "adults": "Volwassenen",
+        "adultsHelp": "12 jaar of ouder",
+        "childrenHalf": "Kinderen",
+        "childrenHalfHelp": "4 – 11 jaar (-50%)",
+        "childrenFree": "Peuters",
+        "childrenFreeHelp": "0 – 3 jaar (gratis)",
+        "nights": "{count, plural, one {# nacht} other {# nachten}}",
+        "back": "Terug naar data",
+        "continue": "Doorgaan"
+      },
+      "contact": {
+        "title": "Verstuur je aanvraag",
+        "name": "Volledige naam",
+        "email": "E-mail",
+        "phone": "WhatsApp / telefoon",
+        "message": "Notities",
+        "messagePlaceholder": "Luchthaventransfer, surfniveau, voedingsbehoeften...",
+        "idHeader": "Identiteitsbewijs",
+        "idHelp": "Optioneel — versnelt je check-in",
+        "idType": "Type document",
+        "idNumber": "Documentnummer",
+        "idTypes": {
+          "national_id": "Identiteitskaart",
+          "residence_permit": "Verblijfsvergunning",
+          "passport": "Paspoort",
+          "driver_license": "Rijbewijs"
+        },
+        "back": "Terug naar verblijf",
+        "submit": "Reservering versturen",
+        "sending": "Versturen...",
+        "errorFields": "Controleer de gemarkeerde velden of probeer het zo opnieuw.",
+        "recap": "Van {checkIn} tot {checkOut}",
+        "recapStay": "{room} · {adults} volwassenen{children, plural, =0 {} other {, # kinderen}}"
+      },
+      "success": {
+        "title": "Aanvraag verstuurd",
+        "body": "We hebben je aanvraag ontvangen en nemen snel contact op om beschikbaarheid, transfers en details te bevestigen.",
+        "again": "Andere boeking maken"
+      },
+      "roomChoice": {
+        "dorm": "Premium Dorm",
+        "private": "Privé-suite",
+        "dormDesc": "{price} / nacht / persoon",
+        "privateDesc": "{price} / nacht / kamer"
+      }
+    }
+  },
+  "footer": {
+    "ctaKicker": "Klaar om te surfen?",
+    "ctaTitleStart": "Jouw Marokkaanse hoofdstuk",
+    "ctaTitleAccent": "begint bij SeArt.",
+    "ctaCheck": "Beschikbaarheid",
+    "ctaWhatsapp": "WhatsApp",
+    "tagline": "Surfen, verblijven, werken en vertragen in Tamraght, minuten van Banana Beach en Marokko's beste Atlantische breaks.",
+    "explore": "Verkennen",
+    "visit": "Bezoeken",
+    "contact": "Contact",
+    "rights": "© 2026 SeArt Surf Camp. Alle rechten voorbehouden.",
+    "signature": "Gemaakt met zout, zon en oceaan."
+  },
+  "pages": {
+    "about": {
+      "kicker": "Over het kamp",
+      "title": "Gemaakt voor reizigers die surf, comfort en community willen.",
+      "subtitle": "SeArt Surf Camp ligt in Tamraght, dicht bij Banana Beach en de klassieke surfkust van Agadir. Kwalitatieve surfdagen, warme Marokkaanse gastvrijheid, rustige gedeelde ruimtes en genoeg flexibiliteit voor beginners, solo-reizigers en digital nomads.",
+      "valuesTitle": "Vier dingen waar we van bezeten zijn.",
+      "values": {
+        "waves": { "title": "Surf op jouw niveau", "copy": "Lessen en spotkeuze afgestemd op condities en je vertrouwen in het water." },
+        "rooftop": { "title": "Sociaal rooftop-ritme", "copy": "Ontbijt, zonsondergangen en relaxte avonden: makkelijk mensen ontmoeten zonder geforceerde feest-hostel sfeer." },
+        "remote": { "title": "Remote-work vriendelijk", "copy": "Wifi, rustigere hoeken en lange verblijven maken werkdagen tussen surf-sessies haalbaar." },
+        "food": { "title": "Marokkaanse eetcultuur", "copy": "Verse lokale maaltijden, dieetopties en gedeelde diners zijn onderdeel van het verblijf." }
+      },
+      "whereKicker": "Waar we zijn",
+      "whereTitleStart": "Tamraght geeft je de surfkust zonder",
+      "whereTitleAccent": "de lokale sfeer te verliezen.",
+      "whereCopy": "Je bent dicht bij surfspots, cafés, markten en Agadir-luchthaven terwijl je in een rustigere dorpssfeer blijft."
+    },
+    "rooms": {
+      "kicker": "Kamers",
+      "title": "Kies het verblijf dat bij je reis past.",
+      "subtitle": "Beide types houden je dicht bij het gedeelde kampleven, het rooftop en het surf-schema.",
+      "request": "Vraag deze kamer aan",
+      "amenitiesEyebrow": "Elk verblijf bevat",
+      "amenities": {
+        "wifi": "Snelle wifi",
+        "storage": "Veilige opslag",
+        "shared": "Schone gedeelde ruimtes"
+      },
+      "dormPoints": ["Privacy-gordijnen", "Leeslampen", "Kluisjes", "Gedeelde badkamer"],
+      "privatePoints": ["Queen-size bed", "Privésfeer", "Bohemian-kust decor", "Ideaal voor lange verblijven"],
+      "dormCopy": "Sociale en budgetvriendelijke optie voor solo-reizigers, vrienden en iedereen die snel in de kampcommunity wil opgaan.",
+      "privateCopy": "Rustigere basis voor stellen, remote-werkers of reizigers die privacy willen met toegang tot de kampervaring.",
+      "perNightPerson": "/ nacht / persoon",
+      "perNightRoom": "/ nacht / kamer"
+    },
+    "packages": {
+      "kicker": "Pakketten",
+      "title": "Kies het ritme van je Marokkaanse surfvakantie.",
+      "subtitle": "Alle pakketten bevatten verblijf, ontbijt, kampfaciliteiten en lokale begeleiding. We bevestigen exacte data en beschikbaarheid na je aanvraag.",
+      "requestDates": "Data aanvragen",
+      "popular": "Populair",
+      "select": "Pakket kiezen",
+      "customKicker": "Iets op maat nodig?",
+      "customTitleStart": "Vertel ons over je",
+      "customTitleAccent": "groep, je niveau, je data.",
+      "customCta": "Maatwerk verblijf bouwen"
+    },
+    "gallery": {
+      "kicker": "Galerij",
+      "title": "Een blik op de golven, kamers en gedeelde kampmomenten.",
+      "subtitle": "Echte visuele textuur telt voor een reisbeslissing.",
+      "follow": "Volg op Instagram"
+    },
+    "faq": {
+      "kicker": "FAQ",
+      "title": "Nuttige antwoorden voor je aankomst.",
+      "subtitle": "Voor alles specifieks over je data, surfniveau of transfer: stuur een bericht en we bevestigen direct.",
+      "stillTitle": "Nog vragen?",
+      "stillBody": "Stuur je reisdata, groepsgrootte en surfniveau. We helpen je het juiste verblijf kiezen.",
+      "stillCta": "WhatsApp"
+    },
+    "contact": {
+      "kicker": "Contact",
+      "title": "Geef ons je data en we vormen het verblijf.",
+      "subtitle": "Deel groepsgrootte, surfniveau, gewenst kamertype en aankomstluchthaven. Snelste manier om te bevestigen is WhatsApp.",
+      "visit": "Bezoeken",
+      "findUsStart": "Vind ons in het hart van",
+      "findUsAccent": "Tamraght.",
+      "cards": {
+        "whatsapp": "WhatsApp",
+        "email": "E-mail",
+        "instagram": "Instagram",
+        "maps": "Google Maps",
+        "openInMaps": "Open in Maps"
+      }
+    }
+  }
+}

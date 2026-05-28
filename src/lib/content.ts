@@ -1,5 +1,7 @@
 export type RoomType = "dorm" | "private";
 
+export type IdDocumentType = "national_id" | "residence_permit" | "passport" | "driver_license";
+
 export type SiteContent = {
   hero: {
     title: string;
@@ -30,9 +32,17 @@ export type BookingInput = {
   phone: string;
   checkIn: string;
   checkOut: string;
+  // Legacy free-text "guests" kept for backwards-compat with old bookings in data.json.
+  // New bookings populate adults/childrenHalf/childrenFree and we keep `guests` in sync as a total.
   guests: string;
+  adults: string;
+  childrenHalf: string;
+  childrenFree: string;
   roomType: RoomType;
   message: string;
+  // Optional identity document — accelerates check-in
+  idType?: IdDocumentType | "";
+  idNumber?: string;
 };
 
 export type Booking = BookingInput & {
@@ -119,14 +129,38 @@ export function calculateNights(checkIn: string, checkOut: string): number {
   return diff > 0 ? Math.ceil(diff / 86_400_000) : 0;
 }
 
-export function calculateBookingTotal(input: Pick<BookingInput, "checkIn" | "checkOut" | "guests" | "roomType">, content: SiteContent) {
-  const nights = calculateNights(input.checkIn, input.checkOut);
-  const guests = Number.parseInt(input.guests, 10);
-  const safeGuests = Number.isFinite(guests) && guests > 0 ? guests : 1;
-  const price = parsePrice(input.roomType === "dorm" ? content.rooms.dormPrice : content.rooms.privatePrice);
-  const multiplier = input.roomType === "dorm" ? safeGuests : 1;
+function safeInt(value: unknown, fallback: number): number {
+  if (typeof value !== "string" && typeof value !== "number") return fallback;
+  const n = typeof value === "string" ? Number.parseInt(value, 10) : value;
+  return Number.isFinite(n) && n >= 0 ? n : fallback;
+}
 
-  return nights * price * multiplier;
+/**
+ * Pricing rules:
+ *  - Adults (12+): full nightly price
+ *  - Children 4-11: 50% of nightly price
+ *  - Toddlers 0-3: free
+ *  - Private suite: charged per ROOM (not per person), but kids 4-11 add 50% per child
+ *    (industry-standard: bed-sharing private — adults flat, kids add a half supplement)
+ *  - Dorm: charged per PERSON for adults + half-price for kids 4-11
+ */
+export function calculateBookingTotal(
+  input: Pick<BookingInput, "checkIn" | "checkOut" | "guests" | "adults" | "childrenHalf" | "roomType">,
+  content: SiteContent,
+) {
+  const nights = calculateNights(input.checkIn, input.checkOut);
+  const nightly = parsePrice(input.roomType === "dorm" ? content.rooms.dormPrice : content.rooms.privatePrice);
+
+  // Prefer new structured fields; fall back to legacy `guests` for old bookings.
+  const adults = input.adults
+    ? safeInt(input.adults, 1)
+    : Math.max(1, safeInt(input.guests, 1));
+  const kidsHalf = safeInt(input.childrenHalf, 0);
+
+  const personUnits = input.roomType === "dorm" ? adults : 1; // private = per room
+  const kidSupplement = kidsHalf * 0.5;
+
+  return Math.round(nights * nightly * (personUnits + kidSupplement));
 }
 
 export const packages = [
