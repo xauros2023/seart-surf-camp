@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import JsonLd from "@/components/JsonLd";
 import PageHero from "@/components/PageHero";
+import PriceTag from "@/components/PriceTag";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import SectionReveal from "@/components/motion/SectionReveal";
@@ -95,7 +96,9 @@ function PackageCard({
       )}
       <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-foreground/50">{pack.duration}</p>
       <h2 className="mt-4 font-serif text-3xl font-medium tracking-tight">{pack.title}</h2>
-      <p className="mt-6 font-serif text-5xl font-medium text-terracotta">{pack.price}</p>
+      <p className="mt-6 font-serif text-5xl font-medium text-terracotta">
+        <PriceTag rawPrice={pack.price} />
+      </p>
       <p className="mt-5 leading-7 text-foreground/65">{pack.description}</p>
       <ul className="mt-8 grid flex-1 gap-3 text-sm text-foreground/75">
         {pack.features.map((feature) => (

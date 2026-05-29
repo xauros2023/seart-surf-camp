@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import PageHero from "@/components/PageHero";
+import PriceTag from "@/components/PriceTag";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import SectionReveal from "@/components/motion/SectionReveal";
@@ -45,7 +46,13 @@ export default async function RoomsPage({ params }: { params: Promise<{ locale: 
               <RoomDetail
                 title="Premium Dorms"
                 icon={<Tent size={28} aria-hidden="true" />}
-                price={`${content.rooms.dormPrice} ${t("perNightPerson")}`}
+                priceNode={
+                  <PriceTag
+                    rawPrice={content.rooms.dormPrice}
+                    suffix={t("perNightPerson")}
+                    className="text-2xl font-medium"
+                  />
+                }
                 image="/images/room-dorm.webp"
                 copy={t("dormCopy")}
                 points={dormPoints}
@@ -56,7 +63,13 @@ export default async function RoomsPage({ params }: { params: Promise<{ locale: 
               <RoomDetail
                 title="Private Suites"
                 icon={<BedDouble size={28} aria-hidden="true" />}
-                price={`${content.rooms.privatePrice} ${t("perNightRoom")}`}
+                priceNode={
+                  <PriceTag
+                    rawPrice={content.rooms.privatePrice}
+                    suffix={t("perNightRoom")}
+                    className="text-2xl font-medium"
+                  />
+                }
                 image="/images/room-private.webp"
                 copy={t("privateCopy")}
                 points={privatePoints}
@@ -98,7 +111,7 @@ export default async function RoomsPage({ params }: { params: Promise<{ locale: 
 function RoomDetail({
   title,
   icon,
-  price,
+  priceNode,
   image,
   copy,
   points,
@@ -106,7 +119,7 @@ function RoomDetail({
 }: {
   title: string;
   icon: ReactNode;
-  price: string;
+  priceNode: ReactNode;
   image: string;
   copy: string;
   points: string[];
@@ -129,7 +142,7 @@ function RoomDetail({
           {icon}
         </div>
         <h2 className="font-serif text-3xl font-medium tracking-tight">{title}</h2>
-        <p className="mt-2 font-serif text-xl font-medium italic text-ocean-dark dark:text-ocean">{price}</p>
+        <p className="mt-2 font-serif text-xl font-medium italic text-ocean-dark dark:text-ocean">{priceNode}</p>
         <p className="mt-5 leading-7 text-foreground/65">{copy}</p>
         <ul className="mt-7 grid gap-2.5 text-sm text-foreground/75">
           {points.map((point) => (
